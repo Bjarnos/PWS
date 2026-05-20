@@ -1,6 +1,4 @@
 --index-url https://download.pytorch.org/whl/cpu
 
 torch
-
-# kan later nog nodig blijken
-# torchvision
+torchvision

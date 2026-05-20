@@ -251,7 +251,6 @@ if __name__ == "__main__":
                     image = np.array([window.get_grid()])
                     logits = model(torch.from_numpy(image).float())[0]
                     window.prediction = torch.softmax(logits, dim=0)
-                    print(window.prediction)
         
         window.quit()
 

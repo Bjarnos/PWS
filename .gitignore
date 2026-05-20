@@ -1,5 +1,10 @@
 backups
+data
+
 __pycache__
 .venv
+
 *.env
 .idea
+.vscode
+.zed

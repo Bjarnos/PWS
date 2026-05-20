@@ -12,8 +12,10 @@ class Window:
         self.SIDEBAR_WIDTH = 500
         self.WINDOW_SIZE = (self.GRID_SIZE * self.PIXEL_SIZE + self.SIDEBAR_WIDTH, self.GRID_SIZE * self.PIXEL_SIZE)
 
-        self.brush_size = 2
-        self.brush_strength = 0.02
+        self.brush_size = 3
+        self.brush_strength = 0.001
+
+        self.mouse_prev = (0, 0)
 
         pygame.init()
         pygame.freetype.init()
@@ -51,31 +53,42 @@ class Window:
         for i in range(10):
             color = (100, 150, 200)
             value = float(self.prediction[i]) * height
+            rect = pygame.Rect((left + i * (width + gap), 300 - height), (width, height))
+            pygame.draw.rect(self.screen, (70, 70, 70), rect)
             rect = pygame.Rect((left + i * (width + gap), 300 - value), (width, value+1))
             pygame.draw.rect(self.screen, color, rect)
             self.draw_text(left + i * (width + gap) + 10, 310, str(i))
 
+        self.draw_text(self.WINDOW_SIZE[0] / 3 * 2 - 40, self.WINDOW_SIZE[1] * 3/4, "[Click to clear screen]")
+
+    def draw(self, x, y):
+        gx = x // self.PIXEL_SIZE
+        gy = y // self.PIXEL_SIZE
+        for dy in range(-self.brush_size, self.brush_size + 1):
+            for dx in range(-self.brush_size, self.brush_size + 1):
+                if 0 <= gx + dx < self.GRID_SIZE and 0 <= gy + dy < self.GRID_SIZE:
+                    strength = (dx**2 + dy**2)**0.5
+                    max_strength = (2*self.brush_size**2)**0.5
+                    self.grid[gy+dy, gx+dx] = min(1.0, self.grid[gy+dy, gx+dx] + (max_strength - strength) ** 4 * self.brush_strength)
+
     def update(self):
+        mx, my = pygame.mouse.get_pos()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if pygame.mouse.get_pos()[0] > self.GRID_SIZE * self.PIXEL_SIZE:
+                if mx > self.GRID_SIZE * self.PIXEL_SIZE:
                     self.grid = np.zeros((self.GRID_SIZE, self.GRID_SIZE))
                 self.drawing = True
             if event.type == pygame.MOUSEBUTTONUP:
                 self.drawing = False
 
         if self.drawing:
-            mx, my = pygame.mouse.get_pos()
-            gx = mx // self.PIXEL_SIZE
-            gy = my // self.PIXEL_SIZE
-            for dy in range(-self.brush_size, self.brush_size + 1):
-                for dx in range(-self.brush_size, self.brush_size + 1):
-                    if 0 <= gx + dx < self.GRID_SIZE and 0 <= gy + dy < self.GRID_SIZE:
-                        strength = (dx**2 + dy**2)**0.5
-                        max_strength = (2*self.brush_size**2)**0.5
-                        self.grid[gy+dy, gx+dx] = min(1.0, self.grid[gy+dy, gx+dx] + (max_strength - strength) ** 4 * self.brush_strength)
+            self.draw((self.mouse_prev[0] + mx) // 2, (self.mouse_prev[1] + my) // 2)
+            self.draw(mx, my)
+
+        self.mouse_prev = (mx, my)
 
         self.draw_grid()
         self.draw_predictions()

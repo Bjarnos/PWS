@@ -14,7 +14,7 @@ options:
   --load-name LOAD_NAME
                         Filename to load a pre-trained model from.
   -t, --type {train,test,interactive,tt,ti}
-                        What the script should do.
+                        What the script should do. (tt = train+test, ti = train+interactive)
   --grid-size GRID_SIZE
                         Amount of images (rooted) to show to the Neural Network in the final test.
   -e, --epochs EPOCHS   Specifies the amount of training epochs.
@@ -228,7 +228,7 @@ if __name__ == "__main__":
                 figure.add_subplot(rows, cols, i)
                 plt.title(f"{label} → {pred}") # 6, pred: 5
                 plt.axis(False)
-                plt.imshow(img.squeeze(), cmap=colorMap)
+                plt.imshow(img.squeeze(), cmap=colorMap, interpolation="mitchell")
                 
             print(f"correct: {num_correct}/{cols*rows} = {int(num_correct/(cols*rows)*100)}%")
             plt.show()
@@ -250,7 +250,8 @@ if __name__ == "__main__":
                     timer = 0
                     image = np.array([window.get_grid()])
                     logits = model(torch.from_numpy(image).float())[0]
-                    window.prediction = torch.softmax(logits, dim=0).detach().numpy()
+                    window.prediction = torch.softmax(logits, dim=0)
+                    print(window.prediction)
         
         window.quit()
 

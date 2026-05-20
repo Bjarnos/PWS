@@ -115,6 +115,15 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         raise ValueError("No backup name provided")
 
+    backupname = f"backups/model_{sys.argv[1]}.pth"
+    dirname = os.path.dirname(__file__)
+    backupfolder = os.path.join(dirname, "backups")
+    if not os.path.exists(backupfolder):
+        os.makedirs(backupfolder)
+    else:
+        if os.path.exists(os.path.join(dirname, backupname)):
+            raise ValueError("Backup already exists! Aborting to prevent overwriting.")
+
     epochs = 5
     for t in range(epochs):
         print(f"Epoch {t + 1}\n-------------------------------")
@@ -122,11 +131,5 @@ if __name__ == "__main__":
         test(test_dataloader, model, loss_fn)
     print("Done!")
 
-    dirname = os.path.dirname(__file__)
-    backupfolder = os.path.join(dirname, "backups")
-    if not os.path.exists(backupfolder):
-        os.makedirs(backupfolder)
-
-    backupname = f"backups/model_{sys.argv[1]}.pth"
     torch.save(model.state_dict(), backupname)
     print(f"Saved PyTorch Model State to {backupname}")

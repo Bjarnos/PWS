@@ -1,7 +1,6 @@
 import argparse
 
 from data import create_dataloaders
-from interactive import interactive_mode
 from model import (
     create_model,
     create_training_components,
@@ -118,6 +117,7 @@ def main():
         )
 
     if args.type in ["interactive", "ti"]:
+        from interactive import interactive_mode
         interactive_mode(model)
 
 

@@ -12,8 +12,8 @@ class Window:
         self.SIDEBAR_WIDTH = 500
         self.WINDOW_SIZE = (self.GRID_SIZE * self.PIXEL_SIZE + self.SIDEBAR_WIDTH, self.GRID_SIZE * self.PIXEL_SIZE)
 
-        self.brush_size = 3
-        self.brush_strength = 0.001
+        self.brush_size = 2
+        self.brush_strength = 0.05
 
         self.mouse_prev = (0, 0)
 

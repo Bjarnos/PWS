@@ -10,5 +10,6 @@ __pycache__
 .zed
 .vsls.json
 
+Jupyter
 .ipynb_checkpoints
 jupyterhub-proxy.pid

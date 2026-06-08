@@ -6,3 +6,6 @@ torchvision
 numpy
 pygame
 matplotlib
+
+requests
+gzip

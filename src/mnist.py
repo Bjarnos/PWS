@@ -32,6 +32,18 @@ class MNIST:
         self.train_labels = (self.train_labels[..., None] == np.arange(10)[None]).astype(np.float64)
         self.test_labels  = (self.test_labels[..., None]  == np.arange(10)[None]).astype(np.float64)
 
+    def get_train_images(self):
+        return self.train_images
+    
+    def get_test_images(self):
+        return self.test_images
+    
+    def get_train_labels(self):
+        return self.train_labels
+    
+    def get_test_labels(self):
+        return self.test_labels
+
     def download(self, filename):
         print("downloading dataset file: " + filename)
 

@@ -3,6 +3,7 @@ import numpy as np
 from ActivationFunction import *
 from Layer import Layer
 
+# temp
 def forward_propagation(input, weights, biases, layers):
     cache = [input]
     current_input = input
@@ -15,6 +16,7 @@ def forward_propagation(input, weights, biases, layers):
         
     return current_input, cache
 
+# temp
 def backward_propagation(output, targets, cache, weights, layers):
     weight_gradients = [None] * len(weights)
     bias_gradients = [None] * len(weights)
@@ -36,6 +38,20 @@ def backward_propagation(output, targets, cache, weights, layers):
 class NeuralNetwork:
     def __init__(self, layers: list[Layer]):
         self.layers = layers
+
+    def forward(self, inputs):
+        for layer in self.layers:
+            inputs = layer.forward(inputs)
+
+        return inputs
+
+    def backward(self, gradient, learn_rate, clip_value):
+        for layer in reversed(self.layers):
+            if False: # isinstance(layer, Activation):
+                gradient = layer.backward(gradient)
+            else:
+                gradient = layer.backward(gradient, learn_rate, clip_value)
+
 
     def train_epoch(self, weights, biases, input_data, output_data):
         total_loss = 0
@@ -81,5 +97,5 @@ class NeuralNetwork:
         print("Done!")
 
     def test_model(self, input_data):
-        pass
+        return self.forward(input_data)
  

@@ -10,16 +10,30 @@ class Layer():
 #         pass
 
 class Dense(Layer):
-    def __init__(self, num_neurons, activation):
-        self.size = num_neurons
+    def __init__(self, input_size, output_size, activation):
+        self.input_size = input_size
+        self.output_size = output_size
         self.activation_func = activation
         self.inputs = None
         self.outputs = None
-        # self.weights = np.random.normal(0, 0.01, (output_size, input_size)) # over nadenken of we ook de output size willen hebben
+        self.weights = np.random.randn(self.output_size, self.input_size) * np.sqrt(2.0 / self.input_size)
+        self.biases = np.zeros(self.output_size)
 
     def forward(self, inputs):
         self.inputs = inputs
-        self.outputs=self.weights * self.inputs + self.biases
+        x = np.dot(self.weights, inputs) + self.biases
+        self.output = self.activation_func(x)
+        return self.output
 
-    def backward(self, output_gradient, learn_rate, momentum, clip_value):
-        pass
+    def backward(self, output_gradient, learn_rate, clip_value):
+        weight_gradient = np.mean(output_gradient @ np.swapaxes(self.inputs, 1, 2), axis=0)
+        bias_gradient = np.mean(output_gradient, axis=0)
+
+        # clip gradients
+        weight_gradient = np.clip(weight_gradient, -clip_value, clip_value)
+        bias_gradient = np.clip(bias_gradient, -clip_value, clip_value)
+
+        self.weights = self.weights - weight_gradient * learn_rate
+        self.biases = self.biases - bias_gradient * learn_rate
+
+        return self.weights.T @ output_gradient

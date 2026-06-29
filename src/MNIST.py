@@ -66,6 +66,9 @@ class MNIST:
             self.train_labels = np.frombuffer(mnist_file.read(), np.uint8, offset=8).copy()
         with gzip.open(os.path.join(self.data_dir, self.data_sources["test_labels"]), "rb") as mnist_file:
             self.test_labels = np.frombuffer(mnist_file.read(), np.uint8, offset=8).copy()
-    
 
-mnist = MNIST()
+    def get_input_size(self):
+        return len(self.train_images[0])
+    
+    def get_output_size(self):
+        return len(self.train_labels[0])

@@ -10,30 +10,33 @@ class Layer():
 #         pass
 
 class Dense(Layer):
-    def __init__(self, input_size, output_size, activation):
+    def __init__(self, input_size, activation):
         self.input_size = input_size
-        self.output_size = output_size
         self.activation_func = activation
+
         self.inputs = None
-        self.outputs = None
-        self.weights = np.random.randn(self.output_size, self.input_size) * np.sqrt(2.0 / self.input_size)
-        self.biases = np.zeros(self.output_size)
+        self.z = None
+        self.weights = None
+        self.biases = None
 
     def forward(self, inputs):
         self.inputs = inputs
-        x = np.dot(self.weights, inputs) + self.biases
-        self.output = self.activation_func(x)
-        return self.output
+        self.z = np.dot(self.weights, inputs) + self.biases
+        return self.activation_func(self.z)
 
-    def backward(self, output_gradient, learn_rate, clip_value):
-        weight_gradient = np.mean(output_gradient @ np.swapaxes(self.inputs, 1, 2), axis=0)
-        bias_gradient = np.mean(output_gradient, axis=0)
+    def backward(self, output_gradient, learn_rate, clip_value, is_last = False):
+        dZ = output_gradient * (1.0 if is_last else self.activation_func.derivative(self.z))
+        
+        weight_gradient = np.outer(dZ, self.inputs)
+        bias_gradient = dZ
 
-        # clip gradients
-        weight_gradient = np.clip(weight_gradient, -clip_value, clip_value)
-        bias_gradient = np.clip(bias_gradient, -clip_value, clip_value)
+        if clip_value:
+            weight_gradient = np.clip(weight_gradient, -clip_value, clip_value)
+            bias_gradient = np.clip(bias_gradient, -clip_value, clip_value)
 
-        self.weights = self.weights - weight_gradient * learn_rate
-        self.biases = self.biases - bias_gradient * learn_rate
+        next_output_gradient = np.dot(self.weights.T, dZ)
 
-        return self.weights.T @ output_gradient
+        self.weights -= learn_rate * weight_gradient
+        self.biases -= learn_rate * bias_gradient
+
+        return next_output_gradient

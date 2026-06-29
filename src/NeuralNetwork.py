@@ -3,38 +3,6 @@ import numpy as np
 from ActivationFunction import *
 from Layer import Layer
 
-# temp
-def forward_propagation(input, weights, biases, layers):
-    cache = [input]
-    current_input = input
-    
-    for l in range(len(layers)):
-        x = np.dot(weights[l], current_input) + biases[l]
-        a = layers[l].activation_func(x)
-        cache.append(a)
-        current_input = a
-        
-    return current_input, cache
-
-# temp
-def backward_propagation(output, targets, cache, weights, layers):
-    weight_gradients = [None] * len(weights)
-    bias_gradients = [None] * len(weights)
-    
-    dZ = output - targets # dit mag alleen met als laatste layer een Softmax layer
-    
-    for l in reversed(range(len(weights))):
-        a_prev = cache[l]
-        
-        weight_gradients[l] = np.outer(dZ, a_prev)
-        bias_gradients[l] = dZ
-        
-        if l > 0:
-            d_activation = layers[l-1].activation_func.derivative(a_prev)
-            dZ = np.dot(weights[l].T, dZ) * d_activation
-            
-    return weight_gradients, bias_gradients
-
 class NeuralNetwork:
     def __init__(self, layers: list[Layer]):
         self.layers = layers
@@ -45,53 +13,45 @@ class NeuralNetwork:
 
         return inputs
 
-    def backward(self, gradient, learn_rate, clip_value):
-        for layer in reversed(self.layers):
-            if False: # isinstance(layer, Activation):
-                gradient = layer.backward(gradient)
-            else:
-                gradient = layer.backward(gradient, learn_rate, clip_value)
-
-
-    def train_epoch(self, weights, biases, input_data, output_data):
+    def train_epoch(self, input_data, output_data):
         total_loss = 0
+
+        learning_rate = 0.01
+        clip_value = 5.0
 
         for i in range(len(input_data)):
             target_output = output_data[i]
-            output, cache = forward_propagation(input_data[i], weights, biases, self.layers)
+            output = self.forward(input_data[i])
 
             output_clipped = np.clip(output, 1e-15, 1.0 - 1e-15)
             total_loss -= np.sum(target_output * np.log(output_clipped))
 
-            weight_gradients, bias_gradients = backward_propagation(output, target_output, cache, weights, self.layers)
-
-            learning_rate = 0.01 # kan later veranderd worden
-            for j in range(len(weights)):
-                weights[j] -= learning_rate * weight_gradients[j]
-                biases[j] -= learning_rate * bias_gradients[j]
+            gradient = output - target_output 
+            
+            for layer in reversed(self.layers):
+                gradient = layer.backward(gradient, learning_rate, clip_value, layer == self.layers[-1])
 
         return total_loss / len(input_data)
 
     def train_model(self, input_data, output_data, epochs: int = 5):
-        weights = []
-        biases = []
-        
         # Generate weight and bias lists
         for i in range(len(self.layers)):
-            input_dim = self.layers[i].size
+            current_layer = self.layers[i]
+            input_size = current_layer.input_size
             
             if i == len(self.layers) - 1:
-                output_dim = len(output_data[0]) 
+                output_size = len(output_data[0]) 
             else:
-                output_dim = self.layers[i+1].size
+                output_size = self.layers[i+1].input_size
 
             # Kaiming Initialization
-            weights.append(np.random.randn(output_dim, input_dim) * np.sqrt(2.0 / input_dim))
-            biases.append(np.zeros(output_dim))
+            current_layer.output_size = output_size
+            current_layer.weights = np.random.randn(output_size, input_size) * np.sqrt(2.0 / input_size)
+            current_layer.biases = np.zeros(output_size)
         
         # Train epochs
         for epoch in range(epochs):
-            loss = self.train_epoch(weights, biases, input_data, output_data)
+            loss = self.train_epoch(input_data, output_data)
             print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss:.4f}")
 
         print("Done!")

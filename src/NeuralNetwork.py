@@ -4,6 +4,7 @@ import joblib
 import time
 
 from ActivationFunction import *
+from LossFunction import *
 from Layer import Layer
 
 class Batch:
@@ -18,7 +19,8 @@ def create_batches(x, y, size = 256):
     return [Batch(_x, _y) for _x, _y in zip(x_train, y_train)]
 
 class NeuralNetwork:
-    def __init__(self, layers: list[Layer]):
+    def __init__(self, loss: LossFunction, layers: list[Layer]):
+        self.loss = loss
         self.layers = layers
         self.learning_rate = 0.01
         self.clip_value = 5.0
@@ -67,17 +69,16 @@ class NeuralNetwork:
         num_processed = 0
 
         for batch in np.random.permutation(batches):
-            num_processed += batch.x.shape[0]
             outputs = self.forward(batch.x)
-            output_clipped = np.clip(outputs, 1e-15, 1.0 - 1e-15)
-            total_loss -= np.sum(batch.y * np.log(output_clipped))
 
-            gradient = outputs - batch.y
+            num_processed += batch.x.shape[0]
+            total_loss += self.loss.calculate(predicted=outputs, expected=batch.y)
+
+            gradient = self.loss.derivative(outputs, batch.y)
             for layer in reversed(self.layers):
                 gradient = layer.backward(gradient, self.learning_rate, self.clip_value, layer == self.layers[-1])
 
         return total_loss / num_processed
-    # is dit sneller?
     
     # def train_model(self, input_data, output_data, epochs: int = 5): # without batches
     #     self.init_weigths(len(output_data[0]))

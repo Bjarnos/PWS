@@ -1,6 +1,7 @@
 # source: https://github.com/joohei/mnist-from-scratch
 import numpy as np
 import joblib
+import time
 
 from ActivationFunction import *
 from Layer import Layer
@@ -89,14 +90,20 @@ class NeuralNetwork:
     #     print("Done!")
 
     def train_model(self, batches, epochs: int = 5): # with batches
+        # keep track of time
+        start_time = time.time()
+
         self.init_weigths(batches[0].y.shape[1])
 
         # Train epochs
         for epoch in range(epochs):
+            start = time.time()
             loss = self.train_epoch(batches)
-            print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss:.4f}")
+            print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss:.4f} - Took: {round(time.time() - start, 2)}s")
 
         print("Done!")
+        duration = time.time() - start_time
+        print(f"Training took {round(duration, 2)}s")
 
     def test_model(self, input_data):
         return self.forward(input_data)

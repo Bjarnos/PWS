@@ -9,7 +9,3 @@ __pycache__
 .vscode
 .zed
 .vsls.json
-
-Jupyter
-.ipynb_checkpoints
-jupyterhub-proxy.pid

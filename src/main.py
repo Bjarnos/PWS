@@ -7,7 +7,7 @@ from LossFunction import *
 mnist = MNIST()
 
 # Train a new model:
-network = NeuralNetwork(loss=MeanSquaredError(), layers=[
+network = NeuralNetwork(loss=MeanAbsoluteError(), layers=[
     Dense(input_size=mnist.get_input_size(), activation=ReLU), # input -> hidden layer
     Dense(input_size=256, activation=Softmax) # hidden -> output layer
 ])

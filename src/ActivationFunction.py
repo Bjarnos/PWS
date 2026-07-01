@@ -1,12 +1,12 @@
 # source: https://www.geeksforgeeks.org/deep-learning/building-artificial-neural-networks-ann-from-scratch/
-import numpy as np
+import jax.numpy as np
 
 class ActivationFunction:
     @staticmethod
-    def calculate(x: np.ndarray) -> np.ndarray: return np.empty((0, 0))
+    def calculate(x: np.ndarray) -> np.ndarray: return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
 
     @staticmethod
-    def derivative(x: np.ndarray) -> np.ndarray: return np.empty((0, 0))
+    def derivative(x: np.ndarray) -> np.ndarray: return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
 
 # ReLU: the activation function for the hidden layer
 class ReLU(ActivationFunction):
@@ -16,7 +16,7 @@ class ReLU(ActivationFunction):
     
     @staticmethod
     def derivative(x: np.ndarray) -> np.ndarray:
-        return (x > 0).astype(np.float64)
+        return (x > 0).astype(np.float32)
 
 # Sigmoid: another activation function for the hidden layer
 class Sigmoid(ActivationFunction):

@@ -1,8 +1,8 @@
-import numpy as np
+import jax.numpy as np
 
 class LossFunction:
-    def calculate(self, predicted: np.ndarray, expected: np.ndarray) -> np.ndarray: return np.empty((0, 0))
-    def derivative(self, predicted: np.ndarray, expected: np.ndarray) -> np.ndarray: return np.empty((0, 0))
+    def calculate(self, predicted: np.ndarray, expected: np.ndarray) -> np.ndarray: return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
+    def derivative(self, predicted: np.ndarray, expected: np.ndarray) -> np.ndarray: return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
 
 
 class MeanSquaredError(LossFunction):
@@ -23,7 +23,7 @@ class MeanAbsoluteError(LossFunction):
         return np.sum(np.abs(expected - predicted))
 
     def derivative(self, predicted: np.ndarray, expected: np.ndarray):
-        return (predicted > expected).astype(np.int64) - (predicted < expected).astype(np.int64)
+        return np.sign(predicted - expected)
     
 class CategorialCrossEntropy(LossFunction):
     def __init__(self, epsilon: float):

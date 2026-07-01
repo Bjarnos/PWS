@@ -1,7 +1,7 @@
 import requests
 import os
 import gzip
-import numpy as np
+import jax.numpy as np
 
 class MNIST:
     def __init__(self, data_dir: str = "data", base_url: str = "https://ossci-datasets.s3.amazonaws.com/mnist/"):
@@ -29,8 +29,8 @@ class MNIST:
         self.test_images  = self.test_images  / 255.0
 
         # one hot encode
-        self.train_labels = (self.train_labels[..., None] == np.arange(10)[None]).astype(np.float64)
-        self.test_labels  = (self.test_labels[..., None]  == np.arange(10)[None]).astype(np.float64)
+        self.train_labels = (self.train_labels[..., None] == np.arange(10)[None]).astype(np.float32)
+        self.test_labels  = (self.test_labels[..., None]  == np.arange(10)[None]).astype(np.float32)
 
     def download(self, filename: str):
         print("downloading dataset file: " + filename)

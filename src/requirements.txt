@@ -1,4 +1,5 @@
-numpy
 requests
 joblib
 colorama
+jax
+jaxlib

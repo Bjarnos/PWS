@@ -1,6 +1,6 @@
 # source: https://github.com/joohei/mnist-from-scratch/blob/main
 from ActivationFunction import ActivationFunction
-import numpy as np
+import jax.numpy as np
 
 class Layer():
     input_size: int
@@ -14,8 +14,8 @@ class Layer():
     prev_weight_momentum: np.ndarray
     prev_bias_momentum: np.ndarray
 
-    def forward(self, inputs: np.ndarray) -> np.ndarray: return np.empty((0, 0))
-    def backward(self, output_gradient: np.ndarray, learn_rate: float, momentum: float, clip_value: float, is_last: bool = False) -> np.ndarray: return np.empty((0, 0))
+    def forward(self, inputs: np.ndarray) -> np.ndarray: return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
+    def backward(self, output_gradient: np.ndarray, learn_rate: float, momentum: float, clip_value: float, is_last: bool = False) -> np.ndarray: return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
 
 
 class Dense(Layer):
@@ -23,12 +23,12 @@ class Dense(Layer):
         self.input_size = input_size
         self.activation = activation
 
-        self.inputs = np.empty((0, 0))
-        self.z = np.empty((0, 0))
-        self.weights = np.empty((0, 0))
-        self.biases = np.empty((0, 0))
-        self.prev_weight_momentum = np.empty((0, 0))
-        self.prev_bias_momentum = np.empty((0, 0))
+        self.inputs = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
+        self.z = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
+        self.weights = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
+        self.biases = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
+        self.prev_weight_momentum = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
+        self.prev_bias_momentum = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
     
     def forward(self, inputs: np.ndarray) -> np.ndarray:
         self.inputs = inputs
@@ -37,7 +37,6 @@ class Dense(Layer):
     
     def backward(self, output_gradient: np.ndarray, learn_rate: float, momentum: float, clip_value: float, is_last: bool = False) -> np.ndarray:
         dZ = output_gradient * (1.0 if is_last else self.activation.derivative(self.z))
-        
         
         batch_size = self.inputs.shape[0]
         weight_gradient = (self.inputs.T @ dZ) / batch_size
@@ -55,6 +54,6 @@ class Dense(Layer):
         self.prev_weight_momentum = weight_momentum
         self.prev_bias_momentum = bias_momentum
 
-        self.weights += weight_momentum.astype(np.float64)
-        self.biases += bias_momentum.astype(np.float64)
+        self.weights = self.weights + weight_momentum.astype(np.float32)
+        self.biases = self.biases + bias_momentum.astype(np.float32)
         return next_output_gradient

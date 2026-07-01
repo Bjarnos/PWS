@@ -2,6 +2,7 @@
 from collections.abc import Sequence
 import jax
 import jax.numpy as np
+import numpy
 import joblib # pyright: ignore[reportMissingTypeStubs]
 import time
 import random
@@ -18,8 +19,8 @@ class Batch:
 
 def create_batches(x: np.ndarray, y: np.ndarray, size: int = 256):
     num_batches = int(np.ceil(x.shape[0] / size))
-    x_train = np.array_split(x, num_batches)
-    y_train = np.array_split(y, num_batches)
+    x_train = numpy.array_split(numpy.asarray(x), num_batches)
+    y_train = numpy.array_split(numpy.asarray(y), num_batches)
     return [Batch(_x, _y) for _x, _y in zip(x_train, y_train)]
 
 class NeuralNetwork:
@@ -32,7 +33,7 @@ class NeuralNetwork:
 
     def init_weigths(self, output_layer_size: int):
         # Generate weight and bias lists
-        key = jax.random.PRNGKey(42)
+        #key = jax.random.PRNGKey(42)
         for i in range(len(self.layers)):
             current_layer = self.layers[i]
             input_size = current_layer.input_size
@@ -43,9 +44,10 @@ class NeuralNetwork:
                 output_size = self.layers[i+1].input_size
 
             # Kaiming Initialization
-            key, subkey = jax.random.split(key)
+            #key, subkey = jax.random.split(key)
             current_layer.output_size = output_size
-            current_layer.weights = jax.random.normal(subkey, (input_size, output_size)) * np.sqrt(2.0 / input_size)
+            #current_layer.weights = jax.random.normal(subkey, (input_size, output_size)) * np.sqrt(2.0 / input_size)
+            current_layer.weights = np.asarray(numpy.random.randn(input_size, output_size) * np.sqrt(2.0 / input_size))
             current_layer.biases = np.zeros(output_size) # pyright: ignore[reportUnknownMemberType]
             current_layer.prev_weight_momentum = np.zeros_like(current_layer.weights) # pyright: ignore[reportUnknownMemberType]
             current_layer.prev_bias_momentum = np.zeros_like(current_layer.biases) # pyright: ignore[reportUnknownMemberType]

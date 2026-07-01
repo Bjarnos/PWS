@@ -3,3 +3,4 @@ joblib
 colorama
 jax
 jaxlib
+numpy

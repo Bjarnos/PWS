@@ -5,6 +5,7 @@ import jax.numpy as np
 import joblib # pyright: ignore[reportMissingTypeStubs]
 import time
 import random
+import platform
 
 from LossFunction import LossFunction
 from Layer import Layer
@@ -63,6 +64,13 @@ class NeuralNetwork:
         
         shuffled_batches = batches.copy()
         random.shuffle(shuffled_batches)
+
+        filled_char = "█"
+        empty_char = "░"
+
+        if platform.system() == "Windows":
+            filled_char = "#"
+            empty_char = "-"
         
         for i, batch in enumerate(shuffled_batches, 1):
             percentage = int(i/batch_amount*100)
@@ -71,7 +79,7 @@ class NeuralNetwork:
             if i % 50 == 0 or i == batch_amount:
                 print(
                     f"\r\033[K{theme.PROGRESS}Progress: {theme.RESET}["
-                    f"{theme.BAR_FILLED}{chars*'█'}{theme.RESET}{theme.BAR_EMPTY}{(20-chars)*'░'}"
+                    f"{theme.BAR_FILLED}{chars*filled_char}{theme.RESET}{theme.BAR_EMPTY}{(20-chars)*empty_char}"
                     f"{theme.RESET}] {theme.VALUE}{percentage}%",
                     end="", flush=True
                 )

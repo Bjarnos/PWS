@@ -4,8 +4,8 @@ import gzip
 import numpy as np
 
 class MNIST:
-    def __init__(self, data_dir="data", base_url="https://ossci-datasets.s3.amazonaws.com/mnist/"):
-        self.data_sources = {
+    def __init__(self, data_dir: str = "data", base_url: str = "https://ossci-datasets.s3.amazonaws.com/mnist/"):
+        self.data_sources: dict[str, str] = {
             "training_images": "train-images-idx3-ubyte.gz",  # 60,000 training images.
             "test_images": "t10k-images-idx3-ubyte.gz",  # 10,000 test images.
             "training_labels": "train-labels-idx1-ubyte.gz",  # 60,000 training labels.
@@ -32,19 +32,7 @@ class MNIST:
         self.train_labels = (self.train_labels[..., None] == np.arange(10)[None]).astype(np.float64)
         self.test_labels  = (self.test_labels[..., None]  == np.arange(10)[None]).astype(np.float64)
 
-    def get_train_images(self):
-        return self.train_images
-    
-    def get_test_images(self):
-        return self.test_images
-    
-    def get_train_labels(self):
-        return self.train_labels
-    
-    def get_test_labels(self):
-        return self.test_labels
-
-    def download(self, filename):
+    def download(self, filename: str):
         print("downloading dataset file: " + filename)
 
         filepath = os.path.join(self.data_dir, filename)

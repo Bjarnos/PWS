@@ -1,18 +1,21 @@
 from NeuralNetwork import *
-from MNIST import *
+from MNIST import MNIST
 from Layer import *
 from ActivationFunction import *
+from LossFunction import *
 
 mnist = MNIST()
 
-# output_size is always calculated from either the next layer's input_size or the given output_data in train_model
-# this means the second layer here has an input_size of 397 but the amount of neurons is 10, confusing xD
-network = NeuralNetwork(loss=CategorialCrossEntropy(1e-9), layers=[
+# Train a new model:
+network = NeuralNetwork(loss=MeanSquaredError(), layers=[
     Dense(input_size=mnist.get_input_size(), activation=ReLU), # input -> hidden layer
     Dense(input_size=256, activation=Softmax) # hidden -> output layer
 ])
-#network.train_model(mnist.train_images, mnist.train_labels)
-batches = create_batches(mnist.train_images, mnist.train_labels, 16)
+batches = create_batches(mnist.train_images, mnist.train_labels, 32)
 network.train_model(batches)
+save_model(network, "test.pkl")
 
-network.save_model()
+# Test the model:
+network = load_model("test.pkl")
+test_batches = create_batches(mnist.test_images, mnist.test_labels, 16)
+print(network.test_model(test_batches))

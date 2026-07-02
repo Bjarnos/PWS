@@ -2,6 +2,8 @@ import requests
 import os
 import gzip
 import jax.numpy as np
+import numpy
+import time
 
 class MNIST:
     def __init__(self, data_dir: str = "data", base_url: str = "https://ossci-datasets.s3.amazonaws.com/mnist/"):
@@ -22,15 +24,24 @@ class MNIST:
             if not os.path.exists(fpath):
                 self.download(fname)
 
+        t1 = time.time()
         self.decompress()
+        print(f"took: {time.time()- t1}s")
         
         # normalize data
         self.train_images = self.train_images / 255.0
         self.test_images  = self.test_images  / 255.0
 
+        t1 = time.time()
         # one hot encode
-        self.train_labels = (self.train_labels[..., None] == np.arange(10)[None]).astype(np.float32)
-        self.test_labels  = (self.test_labels[..., None]  == np.arange(10)[None]).astype(np.float32)
+        self.train_labels = (self.train_labels[..., None] == numpy.arange(10)[None]).astype(np.float32)
+        self.test_labels  = (self.test_labels[..., None]  == numpy.arange(10)[None]).astype(np.float32)
+
+        self.train_images = np.asarray(self.train_images)
+        self.train_labels = np.asarray(self.train_labels)
+        self.test_images = np.asarray(self.test_images)
+        self.test_labels = np.asarray(self.test_labels)
+        print(f"took: {time.time()- t1}s")
 
     def download(self, filename: str):
         print("downloading dataset file: " + filename)
@@ -45,15 +56,15 @@ class MNIST:
     def decompress(self):
         # images
         with gzip.open(os.path.join(self.data_dir, self.data_sources["training_images"]), "rb") as mnist_file:
-            self.train_images = np.frombuffer(mnist_file.read(), np.uint8, offset=16).reshape(-1, 28 * 28).copy()
+            self.train_images = numpy.frombuffer(mnist_file.read(), numpy.uint8, offset=16).reshape(-1, 28 * 28).copy()
         with gzip.open(os.path.join(self.data_dir, self.data_sources["test_images"]), "rb") as mnist_file:
-            self.test_images = np.frombuffer(mnist_file.read(), np.uint8, offset=16).reshape(-1, 28 * 28).copy()
+            self.test_images = numpy.frombuffer(mnist_file.read(), numpy.uint8, offset=16).reshape(-1, 28 * 28).copy()
 
         # labels
         with gzip.open(os.path.join(self.data_dir, self.data_sources["training_labels"]), "rb") as mnist_file:
-            self.train_labels = np.frombuffer(mnist_file.read(), np.uint8, offset=8).copy()
+            self.train_labels = numpy.frombuffer(mnist_file.read(), numpy.uint8, offset=8).copy()
         with gzip.open(os.path.join(self.data_dir, self.data_sources["test_labels"]), "rb") as mnist_file:
-            self.test_labels = np.frombuffer(mnist_file.read(), np.uint8, offset=8).copy()
+            self.test_labels = numpy.frombuffer(mnist_file.read(), numpy.uint8, offset=8).copy()
 
     def get_input_size(self):
         return len(self.train_images[0])

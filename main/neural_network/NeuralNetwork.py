@@ -48,7 +48,7 @@ class NeuralNetwork:
             current_layer.prev_weight_momentum = np.zeros_like(current_layer.weights) # pyright: ignore[reportUnknownMemberType]
             current_layer.prev_bias_momentum = np.zeros_like(current_layer.biases) # pyright: ignore[reportUnknownMemberType]
 
-    def forward(self, inputs: np.ndarray):
+    def run(self, inputs: np.ndarray):
         for layer in self.layers:
             inputs = layer.forward(inputs)
 
@@ -82,7 +82,7 @@ class NeuralNetwork:
                     end="", flush=True
                 )
 
-            outputs = self.forward(batch.x)
+            outputs = self.run(batch.x)
 
             num_processed += batch.x.shape[0]
             total_loss += self.loss.calculate(predicted=outputs, expected=batch.y)
@@ -119,19 +119,12 @@ class NeuralNetwork:
 
         duration = time.time() - start_time
         print(f"{theme.TIME}Training took {theme.RESET + theme.VALUE}{round(duration, 2)}s")
-
-    def run_chances(self, input_data: np.ndarray):
-        return self.forward(input_data)
-    
-    def run(self, input_data: np.ndarray):
-        chances = self.run_chances(input_data)
-        return np.argmax(chances, axis=-1)
     
     def test_model(self, input_data: list[Batch]):
         num_correct = 0
         num_tried = 0
         for batch in input_data:
-            output_data = self.forward(batch.x)
+            output_data = self.run(batch.x)
             num_tried += len(output_data)
             
             predicted_classes = np.argmax(output_data, axis=-1)

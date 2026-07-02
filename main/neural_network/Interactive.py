@@ -6,7 +6,7 @@ import pygame
 import pygame.freetype
 import matplotlib.cm as cm
 
-viridis = cm.get_cmap("viridis")
+viridis = cm.get_cmap("viridis") # type: ignore
 
 class Window:
     def __init__(self):
@@ -43,8 +43,9 @@ class Window:
         for y in range(self.GRID_SIZE):
             for x in range(self.GRID_SIZE):
                 value: float = self.grid[y, x]  # float 0–1
-                r, g, b, _ = viridis(value)  # returns RGBA (0–1)
-                color = (int(r * 255), int(g * 255), int(b * 255))
+
+                r, g, b, _ = viridis(value)  # pyright: ignore[reportUnknownVariableType] # returns RGBA (0–1)
+                color = (int(r * 255), int(g * 255), int(b * 255)) # pyright: ignore[reportUnknownArgumentType]
                 rect = pygame.Rect(x * self.PIXEL_SIZE, y * self.PIXEL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE)
                 pygame.draw.rect(self.screen, color, rect)
 
@@ -121,6 +122,6 @@ def interactive_mode(network: NeuralNetwork):
                 window.get_grid()
             ]).reshape(-1, 28 * 28).copy()
             
-            window.prediction = network.run_chances(image)[0]
+            window.prediction = network.run(image)[0]
 
     window.quit()

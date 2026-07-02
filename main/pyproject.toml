@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "neural_network"
+version = "1.0.0"
+description = "A simple library to train Neural Networks and test them"
+readme = "README.md"
+requires-python = ">=3.14"
+license = { text = "MIT" }
+dependencies = [
+    "requests>=2.34.2,<3.0.0",
+    "joblib>=1.5.3,<2.0.0",
+    "colorama>=0.4.6,<0.5.0",
+    "jax>=0.10.2,<0.11.0",
+    "jaxlib>=0.10.2,<0.11.0",
+    "numpy>=2.4.4,<3.0.0"
+]
+
+[project.optional-dependencies]
+interactive = [
+    "pygame>=2.6.1,<3.0.0",
+    "matplotlib>=3.10.9,<4.0.0"
+]
+
+[project.urls]
+Repository = "https://github.com/Bjarnos/PWS.git"
+
+[tool.hatch.build.targets.wheel]
+packages = ["neural_network"]

@@ -4,7 +4,6 @@ class LossFunction:
     def calculate(self, predicted: np.ndarray, expected: np.ndarray) -> np.ndarray: return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
     def derivative(self, predicted: np.ndarray, expected: np.ndarray) -> np.ndarray: return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
 
-
 class MeanSquaredError(LossFunction):
     def __init__(self):
         super().__init__()
@@ -35,4 +34,14 @@ class CategorialCrossEntropy(LossFunction):
 
     def derivative(self, predicted: np.ndarray, expected: np.ndarray):
         return predicted - expected
+    
+class KLDivergence(LossFunction):
+    def __init__(self):
+        super().__init__()
+
+    def calculate(self, predicted: np.ndarray, expected: np.ndarray):
+        return np.sum(expected * np.log(expected / predicted))
+
+    def derivative(self, predicted: np.ndarray, expected: np.ndarray):
+        return np.log(expected / predicted) + 1
     

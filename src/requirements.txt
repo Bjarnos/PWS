@@ -1,6 +1,0 @@
-requests
-joblib
-colorama
-jax
-jaxlib
-numpy

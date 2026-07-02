@@ -91,6 +91,13 @@ class Sigmoid(ActivationFunction):
         v = self.calculate(x)
         return v * (1 - v)
     
+class Softsign(ActivationFunction):
+    def calculate(self, x: np.ndarray) -> np.ndarray:
+        return x / (np.abs(x) + 1)
+    
+    def derivative(self, x: np.ndarray) -> np.ndarray:
+        return 1 / np.square(np.abs(x) + 1)
+    
 class Swish(ActivationFunction):
     def calculate(self, x: np.ndarray) -> np.ndarray:
         return x * (1 / (1 + np.exp(-x)))

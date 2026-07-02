@@ -1,6 +1,9 @@
 backups
 data
 *.pkl
+data*.json
+benchmarks*.json
+*.ttf
 
 __pycache__
 .venv

@@ -38,7 +38,7 @@ def benchmark(network_loss: type[LossFunction], network_layers: list[Layer]):
     return (t4-t3, final_acc)
 
 times = []
-for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian, Sigmoid, Softsign, Swish, Tanh, Softmax]:
+for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian, Sigmoid, Softsign, Swish, Tanh]:
     for loss in [CategorialCrossEntropy, MeanSquaredError]:
         return_value = benchmark(loss, [
             Dense(input_size=mnist.get_input_size(), activation=activation()), # input -> hidden layer

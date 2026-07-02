@@ -22,7 +22,7 @@ mnist = MNIST()
 # Train a new neural network:
 network = NeuralNetwork(loss=MeanSquaredError(), layers=[
     Dense(input_size=mnist.get_input_size(), activation=ReLU()), # input -> hidden layer
-    Dense(input_size=256) # hidden -> output layer
+    Dense(input_size=256, activation=Softmax()) # hidden -> output layer
     ])
 batches = create_batches(mnist.train_images, mnist.train_labels, 32)
 network.train_model(batches)

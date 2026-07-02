@@ -42,7 +42,7 @@ for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian,
     for loss in [CategorialCrossEntropy, MeanSquaredError]:
         return_value = benchmark(loss, [
             Dense(input_size=mnist.get_input_size(), activation=activation()), # input -> hidden layer
-            Dense(input_size=256) # hidden -> output layer
+            Dense(input_size=256, activation=Softmax()) # hidden -> output layer
             ])
         
         times.append([activation.__name__, loss.__name__, return_value[0], return_value[1]])

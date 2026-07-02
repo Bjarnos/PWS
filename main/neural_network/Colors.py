@@ -11,7 +11,7 @@ class Colors:
     VALUE        = Fore.WHITE
     FINISH       = Style.BRIGHT + Fore.GREEN # unused
     TIME         = Fore.CYAN
-    ERROR        = Fore.RED
+    ERROR        = Fore.RED # unused
     RESET        = Style.RESET_ALL
 
 theme = Colors()

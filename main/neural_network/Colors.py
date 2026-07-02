@@ -9,7 +9,7 @@ class Colors:
     HEADER       = Style.BRIGHT + Fore.MAGENTA
     LABEL        = Style.BRIGHT + Fore.YELLOW
     VALUE        = Fore.WHITE
-    FINISH       = Style.BRIGHT + Fore.GREEN
+    FINISH       = Style.BRIGHT + Fore.GREEN # unused
     TIME         = Fore.CYAN
     RESET        = Style.RESET_ALL
 

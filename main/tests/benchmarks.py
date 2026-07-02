@@ -26,7 +26,6 @@ def benchmark(network_loss: type[LossFunction], network_layers: list[Layer]):
     print(f"Final accuracy: {(final_acc*100):.4f}%")
     t8 = time()
     print(
-        f"Creating network:               {t2-t1:.4}s\n"
         f"Creating batches:               {t3-t2:.4}s\n"
         f"Training model:                 {t4-t3:.5}s\n"
         f"Saving model to file:           {t5-t4:.4}s\n"
@@ -39,8 +38,8 @@ def benchmark(network_loss: type[LossFunction], network_layers: list[Layer]):
     return (t4-t3, final_acc)
 
 times = []
-for activation in [ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian, SMHT, Sigmoid, Swish, Tanh, Softmax]:
-    for loss in [CategorialCrossEntropy, MeanSquaredError, MeanAbsoluteError]:
+for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian, Sigmoid, Softsign, Swish, Tanh, Softmax]:
+    for loss in [CategorialCrossEntropy, MeanSquaredError]:
         return_value = benchmark(loss, [
             Dense(input_size=mnist.get_input_size(), activation=activation()), # input -> hidden layer
             Dense(input_size=256, activation=Softmax()) # hidden -> output layer

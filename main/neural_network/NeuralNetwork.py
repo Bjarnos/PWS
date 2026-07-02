@@ -68,7 +68,7 @@ class NeuralNetwork:
 
         if platform.system() == "Windows":
             filled_char = "#"
-            empty_char = "-"
+            empty_char = "_"
         
         for i, batch in enumerate(shuffled_batches, 1):
             percentage = int(i/batch_amount*100)
@@ -117,7 +117,6 @@ class NeuralNetwork:
                 print(f"{theme.TIME}Traing stopped! Accuracy is {theme.RESET + theme.VALUE}100%")
                 break
 
-        print(f"{theme.FINISH}Done!")
         duration = time.time() - start_time
         print(f"{theme.TIME}Training took {theme.RESET + theme.VALUE}{round(duration, 2)}s")
 

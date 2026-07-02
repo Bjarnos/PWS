@@ -35,13 +35,14 @@ class CategorialCrossEntropy(LossFunction):
     def derivative(self, predicted: np.ndarray, expected: np.ndarray):
         return predicted - expected
     
-class KLDivergence(LossFunction):
-    def __init__(self):
+class KLDivergence(LossFunction): # unused
+    def __init__(self, epsilon: float = 1e-9):
         super().__init__()
+        self.epsilon = epsilon
 
     def calculate(self, predicted: np.ndarray, expected: np.ndarray):
-        return np.sum(expected * np.log(expected / predicted))
+        return np.sum(expected * np.log(np.clip(expected / (predicted + self.epsilon), self.epsilon, 1e9)))
 
     def derivative(self, predicted: np.ndarray, expected: np.ndarray):
-        return np.log(expected / predicted) + 1
-    
+        #print(np.maximum(expected / (predicted + self.epsilon), self.epsilon))
+        return np.log(np.maximum(expected / (predicted + self.epsilon), self.epsilon)) + 1

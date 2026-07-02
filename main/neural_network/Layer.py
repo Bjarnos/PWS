@@ -5,7 +5,7 @@ import jax.numpy as np
 class Layer():
     input_size: int
     output_size: int
-    activation: ActivationFunction
+    activation: ActivationFunction | None
 
     inputs: np.ndarray
     z: np.ndarray
@@ -19,7 +19,7 @@ class Layer():
 
 
 class Dense(Layer):
-    def __init__(self, input_size: int, activation: ActivationFunction):
+    def __init__(self, input_size: int, activation: ActivationFunction | None = None):
         self.input_size = input_size
         self.activation = activation
 
@@ -33,10 +33,10 @@ class Dense(Layer):
     def forward(self, inputs: np.ndarray) -> np.ndarray:
         self.inputs = inputs
         self.z = self.inputs @ self.weights + self.biases
-        return self.activation.calculate(self.z)
+        return self.activation.calculate(self.z) # pyright: ignore[reportOptionalMemberAccess]
     
     def backward(self, output_gradient: np.ndarray, learn_rate: float, momentum: float, clip_value: float, is_last: bool = False) -> np.ndarray:
-        dZ = output_gradient * (1.0 if is_last else self.activation.derivative(self.z))
+        dZ = output_gradient * (1.0 if is_last else self.activation.derivative(self.z)) # pyright: ignore[reportOptionalMemberAccess]
         
         batch_size = self.inputs.shape[0]
         weight_gradient = (self.inputs.T @ dZ) / batch_size

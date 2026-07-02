@@ -7,8 +7,7 @@ mnist = MNIST()
 # Train a new model:
 network = NeuralNetwork(loss=KLDivergence(), layers=[
     Dense(input_size=mnist.get_input_size(), activation=ReLU()), # input -> hidden layer
-    Dense(input_size=256, activation=Softmax()) # hidden -> output layer
-    # The last activation function must be Softmax to map the vectors!
+    Dense(input_size=256) # hidden -> output layer
     ])
 batches = create_batches(mnist.train_images, mnist.train_labels, 32)
 network.train_model(batches)

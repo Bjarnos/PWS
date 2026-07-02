@@ -7,6 +7,7 @@ import time
 import random
 import platform
 
+from .ActivationFunction import Softmax
 from .LossFunction import LossFunction
 from .Layer import Layer
 from .Colors import theme
@@ -29,6 +30,17 @@ class NeuralNetwork:
         self.learning_rate = 0.01
         self.momentum = 0.9
         self.clip_value = 5.0
+
+        length = len(self.layers)
+        for i in range(length):
+            layer = self.layers[i]
+            if i == length - 1:
+                if layer.activation != None:
+                    print(f"{theme.ERROR}Overwrote the final layer's activation function (should've been empty).")
+                layer.activation = Softmax()
+            else:
+                if layer.activation == None:
+                    raise RuntimeError("Any layer that isn't the final one must have an activation function.")
 
     def init_weigths(self, output_layer_size: int):
         # Generate weight and bias lists

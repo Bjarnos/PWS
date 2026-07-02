@@ -14,7 +14,7 @@ class MeanSquaredError(LossFunction):
     def derivative(self, predicted: np.ndarray, expected: np.ndarray):
         return 2 * (predicted - expected)
     
-class MeanAbsoluteError(LossFunction):
+class MeanAbsoluteError(LossFunction): # doesn't work
     def __init__(self):
         super().__init__()
 
@@ -35,7 +35,7 @@ class CategorialCrossEntropy(LossFunction):
     def derivative(self, predicted: np.ndarray, expected: np.ndarray):
         return predicted - expected
     
-class KLDivergence(LossFunction): # unused
+class KLDivergence(LossFunction): # doesn't work
     def __init__(self, epsilon: float = 1e-9):
         super().__init__()
         self.epsilon = epsilon

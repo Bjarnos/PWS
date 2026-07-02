@@ -5,7 +5,7 @@ import jax.numpy as np
 import numpy
 
 class MNIST:
-    def __init__(self, data_dir: str = "data", base_url: str = "https://ossci-datasets.s3.amazonaws.com/mnist/"):
+    def __init__(self, data_dir: str = "data/mnist", base_url: str = "https://ossci-datasets.s3.amazonaws.com/mnist/"):
         self.data_sources: dict[str, str] = {
             "training_images": "train-images-idx3-ubyte.gz",  # 60,000 training images.
             "test_images": "t10k-images-idx3-ubyte.gz",  # 10,000 test images.

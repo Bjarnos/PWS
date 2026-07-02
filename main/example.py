@@ -2,10 +2,10 @@
 from neural_network import *
 
 # Initialize our dataset:
-mnist = MNIST()
+mnist = FASHION_MNIST()
 
 # Train a new model:
-network = NeuralNetwork(loss=KLDivergence(), layers=[
+network = NeuralNetwork(loss=MeanSquaredError(), layers=[
     Dense(input_size=mnist.get_input_size(), activation=ReLU()), # input -> hidden layer
     Dense(input_size=256, activation=Softmax()) # hidden -> output layer
     ])

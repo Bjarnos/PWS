@@ -2,7 +2,7 @@
 
 A simple library to train Neural Networks and test them. Written for our PWS.
 
-The documentation is live at https://neuralnetwork.bjarnos.dev.
+The documentation is live at https://bjarnos.dev/PWS.
 
 ## Installing
 

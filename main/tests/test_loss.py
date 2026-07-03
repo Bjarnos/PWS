@@ -1,6 +1,6 @@
 # type: ignore
 import jax.numpy as np
-from neural_network import MeanSquaredError, MeanAbsoluteError, CategorialCrossEntropy
+from neural_network.LossFunctions import MeanSquaredError, MeanAbsoluteError, CategorialCrossEntropy
 
 mse = MeanSquaredError()
 mae = MeanAbsoluteError()
@@ -12,4 +12,3 @@ expected = np.array([[0.0, 1.0], [1.0, 0.0]])
 print("MSE grad:\n", mse.derivative(predicted, expected))
 print("MAE grad:\n", mae.derivative(predicted, expected))
 print("CCE grad:\n", cce.derivative(predicted, expected))
-

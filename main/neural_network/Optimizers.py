@@ -73,7 +73,7 @@ class AdaGrad(Optimizer):
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
                   acc_w_grad: np.ndarray, acc_b_grad: np.ndarray, weights: np.ndarray, biases: np.ndarray, 
                   w_momentum: np.ndarray, b_momentum: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        r'''$$G_{t+1}=G_t+g_t, \\ \theta_{t+1}=\theta_t-\frac{\alpha}{\sqrt{G_{t+1}}+\epsilon}g_t$$'''
+        r'''$$G_{t+1}=G_t+g_t^2, \\ \theta_{t+1}=\theta_t-\frac{\alpha}{\sqrt{G_{t+1}}+\epsilon}g_t$$'''
 
         acc_w_grad = acc_w_grad + np.square(w_gradient)
         acc_b_grad = acc_b_grad + np.square(b_gradient)
@@ -125,7 +125,7 @@ class Adam(Optimizer):
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
                   acc_w_grad: np.ndarray, acc_b_grad: np.ndarray, weights: np.ndarray, biases: np.ndarray, 
                   w_momentum: np.ndarray, b_momentum: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        r'''$$m_t=\beta_1m_{t-1}+(1-\beta_1)g_t, \\ v_t=\beta_2v_{t-1}+(1-\beta_2)g^2_t, \\ \hat{m_t}=\frac{m_t}{(1-\beta^t_1)}, \\ \hat{v_t}=\frac{v_t}{(1-\beta^t_2)}, \\ \theta_t=\theta_{t-1}-\alpha\frac{\hat{m_t}}{\sqrt{\hat{v_t}}+\epsilon}$$'''
+        r'''$$m_t=\beta_1m_{t-1}+(1-\beta_1)g_t, \\ v_t=\beta_2v_{t-1}+(1-\beta_2)g^2_t, \\ \hat{m_t}=\frac{m_t}{(1-\beta_1)}, \\ \hat{v_t}=\frac{v_t}{(1-\beta_2)}, \\ \theta_t=\theta_{t-1}-\alpha\frac{\hat{m_t}}{\sqrt{\hat{v_t}}+\epsilon}$$'''
 
         w_momentum = self.decay_ma * w_momentum + (1 - self.decay_ma) * w_gradient
         b_momentum = self.decay_ma * b_momentum + (1 - self.decay_ma) * b_gradient

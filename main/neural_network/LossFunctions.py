@@ -34,10 +34,10 @@ class MeanSquaredError(LossFunction):
         return np.sum(np.square(expected - predicted))
 
     def derivative(self, predicted: np.ndarray, expected: np.ndarray):
-        r'''$$\text{MSE}'=2(y_i-\hat{y_i})$$'''
+        r'''$$\text{MSE}'=2(\hat{y_i}-y_i)$$'''
         return 2 * (predicted - expected)
     
-class MeanAbsoluteError(LossFunction): # doesn't work
+class MeanAbsoluteError(LossFunction):
     """
     A loss function which calculates the average of the
     absolutes of the errors
@@ -67,7 +67,7 @@ class CategorialCrossEntropy(LossFunction):
         r'''$$\text{CCE}'=\hat{y_i} - y_i$$'''
         return predicted - expected
     
-class KLDivergence(LossFunction): # doesn't work
+class KLDivergence(LossFunction):
     """
     A loss function which calculates the distance between
     two probability distributions
@@ -81,8 +81,8 @@ class KLDivergence(LossFunction): # doesn't work
         return np.sum(expected * np.log(np.clip(expected / (predicted + self.epsilon), self.epsilon, 1e9)))
 
     def derivative(self, predicted: np.ndarray, expected: np.ndarray):
-        r'''$$\text{KLD}'=\ln(\frac{y_i}{\hat{y_i}})$$'''
-        return np.log(np.maximum(expected / (predicted + self.epsilon), self.epsilon)) + 1
+        r'''$$\text{KLD}'=\hat{y_i} - y_i$$'''
+        return predicted - expected
 
 __all__ = [
     "LossFunction", "MeanSquaredError", "MeanAbsoluteError",

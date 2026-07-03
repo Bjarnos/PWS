@@ -44,9 +44,12 @@ test_batches = create_batches(mnist.test_images, mnist.test_labels, 16)
 print(f"Final accuracy: {(network.test_model(test_batches)*100):.4}%")
 ```
 
+It primarily highlights the important submodules of our library and it shows
+an example on how to create, train and test a neural network. Have fun developing!
+
 ## Building the docs
 
-We use [`pdoc`](https://pdoc.dev/) to build our docs for us. Because pdoc can already recognize all important information,
+We use [`pdoc`](https://pdoc.dev/) to build our docs for us. Because pdoc already recognizes all important information,
 we have chosen not to use a specific format for our docstrings, but just markdown.
 
 To install pdoc just run this in the same environment as where you installed the libraries for neural_network:

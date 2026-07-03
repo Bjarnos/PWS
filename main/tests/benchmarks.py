@@ -1,14 +1,20 @@
 # type: ignore
-from neural_network import *
+from neural_network.NeuralNetwork import *
+from neural_network.Datasets import MNIST
+from neural_network.Layers import Dense
+from neural_network.ActivationFunctions import *
+from neural_network.LossFunctions import *
+from neural_network.Optimizers import *
+
 from time import time
 import json
 
 mnist = MNIST()
 
-def benchmark(network_loss: type[LossFunction], network_layers: list[Layer]):
+def benchmark(network_loss: type[LossFunction], network_optimizer: type[Optimizer], network_layers: list[Layer]):
     # Train a new model:
     t1 = time()
-    network = NeuralNetwork(loss=network_loss(), layers=network_layers)
+    network = NeuralNetwork(loss=network_loss(), optimizer=network_optimizer(), layers=network_layers)
     t2 = time()
     batches = create_batches(mnist.train_images, mnist.train_labels, 32)
     t3 = time()
@@ -39,13 +45,14 @@ def benchmark(network_loss: type[LossFunction], network_layers: list[Layer]):
 
 times = []
 for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian, Sigmoid, Softsign, Swish, Tanh]:
-    for loss in [CategorialCrossEntropy, MeanSquaredError]:
-        return_value = benchmark(loss, [
-            Dense(input_size=mnist.get_input_size(), activation=activation()), # input -> hidden layer
-            Dense(input_size=256, activation=Softmax()) # hidden -> output layer
-            ])
-        
-        times.append([activation.__name__, loss.__name__, return_value[0], return_value[1]])
+    for loss in [MeanSquaredError, MeanAbsoluteError, CategorialCrossEntropy, KLDivergence]:
+        for optimizer in [SGD, SGDM, AdaGrad, RMSprop, Adam]:
+            return_value = benchmark(loss, optimizer, [
+                Dense(input_size=mnist.get_input_size(), activation=activation()), # input -> hidden layer
+                Dense(input_size=256, activation=Softmax()) # hidden -> output layer
+                ])
+            
+            times.append([activation.__name__, loss.__name__, return_value[0], return_value[1]])
 
 with open("benchmarks.json", "w") as file:
     json.dump(times, file)

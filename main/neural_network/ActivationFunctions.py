@@ -92,7 +92,7 @@ class Softplus(ActivationFunction):
         return np.log(1 + np.exp(x))
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Softplus}'(x)=\frac{1}{1+e^x}$$'''
+        r'''$$\text{Softplus}'(x)=\frac{1}{1+e^{-x}}$$'''
         return 1 / (1 + np.exp(-x))
     
 class ELU(ActivationFunction):
@@ -105,11 +105,11 @@ class ELU(ActivationFunction):
         self.sharpness = sharpness
         
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{ELU}(x)=\begin{cases}x, & \text{if } x > 0 \\\\e^x-1, & \text{if } x < 0\end{cases}$$'''
+        r'''$$\text{ELU}(x)=\begin{cases}x, & \text{if } x > 0 \\\\\alpha(e^x-1), & \text{if } x < 0\end{cases}$$'''
         return np.where(x >= 0, x, self.sharpness * (np.exp(x) - 1))
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{ELU}'(x)=\begin{cases}1, & \text{if } x > 0 \\\\\text{ELU}(x) + 1, & \text{if } x < 0\end{cases}$$'''
+        r'''$$\text{ELU}'(x)=\begin{cases}1, & \text{if } x > 0 \\\\\text{ELU}(x) + \alpha, & \text{if } x < 0\end{cases}$$'''
         return np.where(x >= 0, 1, self.calculate(x) + self.sharpness)
 
 class SELU(ActivationFunction):
@@ -123,11 +123,11 @@ class SELU(ActivationFunction):
         self.scale = scale
         
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{SELU}(x)=\begin{cases}\lambda{x}, & \text{if } x > 0 \\\\\lambda{e^x-1}, & \text{if } x < 0\end{cases}$$'''
+        r'''$$\text{SELU}(x)=\begin{cases}\lambda{x}, & \text{if } x > 0 \\\\\lambda\alpha(e^x-1), & \text{if } x < 0\end{cases}$$'''
         return self.scale * np.where(x >= 0, x, self.sharpness * (np.exp(x) - 1))
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{SELU}'(x)=\begin{cases}\lambda, & \text{if } x > 0 \\\\\lambda{e^x}, & \text{if } x < 0\end{cases}$$'''
+        r'''$$\text{SELU}'(x)=\begin{cases}\lambda, & \text{if } x > 0 \\\\\lambda\alpha{e^x}, & \text{if } x < 0\end{cases}$$'''
         return self.scale * np.where(x >= 0, 1, self.sharpness * np.exp(x))
 
 class GELU(ActivationFunction):
@@ -142,9 +142,11 @@ class GELU(ActivationFunction):
         return 0.5 * x * (1 + np.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))))
     
     def derivative(self, x: np.ndarray) -> np.ndarray: 
-        r'''$$\text{GELU}'(x)=0.5(1+0.5(1 + \text{tanh}(\sqrt{\frac{2}{\pi}}(x+0.044715x^3) + (\frac{x}{\sqrt{2}})))+x(1-0.5(1 + \text{tanh}(\sqrt{\frac{2}{\pi}}(x+0.044715x^3) + (\frac{x}{\sqrt{2}})))))$$'''
-        cdf = 0.5 * (1 + np.tanh((np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))) + (x / np.sqrt(2))))
-        return 0.5 * (1 + cdf + x * (1 - cdf))
+        r'''$$\text{GELU}'(x)=0.5\left(1+\text{tanh}(u)\right) + 0.5x(1-\text{tanh}^2(u))u'$$'''
+        u = np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))
+        u_prime = np.sqrt(2 / np.pi) * (1 + 3 * 0.044715 * np.square(x))
+        tanh_u = np.tanh(u)
+        return 0.5 * (1 + tanh_u) + 0.5 * x * (1 - np.square(tanh_u)) * u_prime
     
 class Gaussian(ActivationFunction):
     """
@@ -200,7 +202,7 @@ class Swish(ActivationFunction):
         return x / (1 + np.exp(-x))
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Swish}'(x)=\frac{\text{Swish}(x)+(1-\text{Swish}(x))}{1+e^{-x}}$$'''
+        r'''$$\text{Swish}'(x)=\text{Swish}(x)+\frac{1-\text{Swish}(x)}{1+e^{-x}}$$'''
         v = self.calculate(x)
         return v + (1 - v) / (1 + np.exp(-x))
     

@@ -11,10 +11,10 @@ import json
 
 mnist = MNIST()
 
-def benchmark(network_loss: type[LossFunction], network_optimizer: type[Optimizer], network_layers: list[Layer]):
+def benchmark(network_loss: LossFunction, network_optimizer: Optimizer, network_layers: list[Layer]):
     # Train a new model:
     t1 = time()
-    network = NeuralNetwork(loss=network_loss(), optimizer=network_optimizer(), layers=network_layers)
+    network = NeuralNetwork(loss=network_loss, optimizer=network_optimizer, layers=network_layers)
     t2 = time()
     batches = create_batches(mnist.train_images, mnist.train_labels, 32)
     t3 = time()
@@ -43,16 +43,24 @@ def benchmark(network_loss: type[LossFunction], network_optimizer: type[Optimize
     
     return (t4-t3, final_acc)
 
+# Mean Absolute Error needs huge learning rates like 0.05 or 0.1 but we can't always test on that
+
 times = []
 for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian, Sigmoid, Softsign, Swish, Tanh]:
     for loss in [MeanSquaredError, MeanAbsoluteError, CategorialCrossEntropy, KLDivergence]:
         for optimizer in [SGD, SGDM, AdaGrad, RMSprop, Adam]:
-            return_value = benchmark(loss, optimizer, [
-                Dense(input_size=mnist.get_input_size(), activation=activation()), # input -> hidden layer
-                Dense(input_size=256, activation=Softmax()) # hidden -> output layer
-                ])
+            if optimizer in [Adam, RMSprop]:
+                learning_rates = [0.0001, 0.0003, 0.0005, 0.001, 0.002, 0.005, 0.01]
+            elif optimizer in [SGD, SGDM, AdaGrad]:
+                learning_rates = [0.005, 0.01, 0.03, 0.05, 0.1, 0.2, 0.3, 0.5]
+
+            for learning_rate in learning_rates:
+                return_value = benchmark(loss(), optimizer(learning_rate), [
+                    Dense(input_size=mnist.get_input_size(), activation=activation()), # input -> hidden layer
+                    Dense(input_size=256, activation=Softmax()) # hidden -> output layer
+                    ])
             
-            times.append([activation.__name__, loss.__name__, optimizer.__name__, return_value[0], return_value[1]])
+                times.append([activation.__name__, loss.__name__, optimizer.__name__, learning_rate, return_value[0], return_value[1]])
 
 with open("benchmarks.json", "w") as file:
     json.dump(times, file)

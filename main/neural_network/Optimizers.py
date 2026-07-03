@@ -23,7 +23,7 @@ class SGD(Optimizer):
     the gradient
     """
 
-    def __init__(self, learning_rate: float = 0.001):
+    def __init__(self, learning_rate: float = 0.01):
         self.learning_rate = learning_rate
 
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
@@ -43,7 +43,7 @@ class SGDM(Optimizer):
     out the updates
     """
 
-    def __init__(self, learning_rate: float = 0.001, momentum: float = 0.9):
+    def __init__(self, learning_rate: float = 0.01, momentum: float = 0.9):
         self.learning_rate = learning_rate
         self.momentum = momentum
 
@@ -66,7 +66,7 @@ class AdaGrad(Optimizer):
     based on its historical gradients
     """
 
-    def __init__(self, learning_rate: float = 0.001, epsilon: float = 1e-9):
+    def __init__(self, learning_rate: float = 0.01, epsilon: float = 1e-9):
         self.learning_rate = learning_rate
         self.epsilon = epsilon
 

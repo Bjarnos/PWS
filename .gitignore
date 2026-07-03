@@ -1,5 +1,6 @@
 backups
 data
+docs
 *.pkl
 data*.json
 benchmarks*.json

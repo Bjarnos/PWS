@@ -1,20 +1,30 @@
 # type: ignore
+
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    raise RuntimeError("Interactive mode libraries not installed.")
+
 import numpy as np
-import matplotlib.pyplot as plt
-from neural_network import *
+
+from neural_network.NeuralNetwork import *
+from neural_network.Layers import Dense
+from neural_network.ActivationFunctions import Tanh, Sigmoid, ReLU
+from neural_network.LossFunctions import MeanSquaredError
+from neural_network.Optimizers import SGD
 
 # Create a network:
 # input: xyr (radius), output: rgb (sigmoid returns 0-1)
-network = NeuralNetwork(loss=MeanSquaredError(), layers=[
-    Dense(input_size=3, activation=Tanh()),
-    Dense(input_size=32, activation=Tanh()),
-    Dense(input_size=32, activation=Tanh()),
-    Dense(input_size=32, activation=Tanh()),
+network = NeuralNetwork(loss=MeanSquaredError(), optimizer=SGD(), layers=[
+    Dense(input_size=3, activation=ReLU()),
+    Dense(input_size=32, activation=ReLU()),
+    Dense(input_size=32, activation=ReLU()),
+    Dense(input_size=32, activation=ReLU()),
     Dense(input_size=32, activation=Sigmoid())
 ])
 
 # The model now has random weights, let's not train it :P
-network.init_weigths(3)
+network.init_weights(3)
 
 # Draw some random RGB art:
 size = 256

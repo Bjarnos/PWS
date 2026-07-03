@@ -1,4 +1,10 @@
-# source: https://github.com/joohei/mnist-from-scratch
+"""
+This is the main module of our library, it contains the most important
+class: [`NeuralNetwork`](/neural_network/NeuralNetwork.html#NeuralNetwork).
+
+Used source: source: https://github.com/joohei/mnist-from-scratch
+"""
+
 from collections.abc import Sequence
 import jax.numpy as np
 import numpy
@@ -7,30 +13,65 @@ import time
 import random
 import platform
 
-from .LossFunction import LossFunction
-from .Layer import Layer
+from .LossFunctions import LossFunction
+from .Optimizers import Optimizer
+from .Layers import Layer
 from .Colors import theme
 
 class Batch:
-    def __init__(self, x_train: np.ndarray, y_train: np.ndarray):
-        self.x = np.asarray(x_train) # pyright: ignore[reportUnknownMemberType]
-        self.y = np.asarray(y_train) # pyright: ignore[reportUnknownMemberType]
+    """
+    A batch is multiple pieces of training data packed in one
+    object
 
-def create_batches(x: np.ndarray, y: np.ndarray, size: int = 256):
+    <em>You should not use this class directly, but rather
+    [`create_batches()`](/neural_network/NeuralNetwork.html#create_batches).
+    It is only exported to use for typing.</em>
+    """
+
+    def __init__(self, x_train: np.ndarray, y_train: np.ndarray):
+        self.x: np.ndarray = np.asarray(x_train) # pyright: ignore[reportUnknownMemberType]
+        "A numpy array of multiple pieces of training data"
+        self.y: np.ndarray = np.asarray(y_train) # pyright: ignore[reportUnknownMemberType]
+        "A numpy array of multiple training labels"
+
+def create_batches(x: np.ndarray, y: np.ndarray, size: int = 256) -> list[Batch]:
+    """
+    A function used to create batches, which you can then pass into
+    `NeuralNetwork.train_model()`
+    """
+
     num_batches = int(np.ceil(x.shape[0] / size))
     x_train = numpy.array_split(numpy.asarray(x), num_batches)
     y_train = numpy.array_split(numpy.asarray(y), num_batches)
     return [Batch(_x, _y) for _x, _y in zip(x_train, y_train)] # pyright: ignore[reportArgumentType]
 
 class NeuralNetwork:
-    def __init__(self, loss: LossFunction, layers: Sequence[Layer]):
-        self.loss = loss
-        self.layers = layers
-        self.learning_rate = 0.01
-        self.momentum = 0.9
-        self.clip_value = 5.0
+    """
+    The most important class in this library. It holds all information
+    required to run or train a neural network. Including: the loss function,
+    the optimizer and the layers.
+    """
 
-    def init_weigths(self, output_layer_size: int):
+    def __init__(self, loss: LossFunction, optimizer: Optimizer, layers: Sequence[Layer]):
+        self.loss: LossFunction = loss
+        "A reference to the set loss function"
+        self.optimizer: Optimizer = optimizer
+        "A reference to the set optimizer"
+        self.layers: Sequence[Layer] = layers
+        "A reference to the set layers"
+        self.clip_value: float = 5.0
+        "The maximum value any training gradient can reach"
+
+    def init_weights(self, output_layer_size: int):
+        """
+        When you create a network, the layers will still have default
+        weights and biases. Use this function to initialize all the
+        weights and biases of the model.
+
+        <em>`train_model()` already calls this function for you, you will
+        only need it if you don't want to train the network (because you
+        want it to return random values)</em>
+        """
         # Generate weight and bias lists
         for i in range(len(self.layers)):
             current_layer = self.layers[i]
@@ -45,16 +86,33 @@ class NeuralNetwork:
             current_layer.output_size = output_size
             current_layer.weights = np.asarray(numpy.random.randn(input_size, output_size) * np.sqrt(2.0 / input_size)) # pyright: ignore[reportUnknownMemberType]
             current_layer.biases = np.zeros(output_size) # pyright: ignore[reportUnknownMemberType]
-            current_layer.prev_weight_momentum = np.zeros_like(current_layer.weights) # pyright: ignore[reportUnknownMemberType]
-            current_layer.prev_bias_momentum = np.zeros_like(current_layer.biases) # pyright: ignore[reportUnknownMemberType]
+            current_layer.weight_momentum = np.zeros_like(current_layer.weights) # pyright: ignore[reportUnknownMemberType]
+            current_layer.bias_momentum = np.zeros_like(current_layer.biases) # pyright: ignore[reportUnknownMemberType]
+            current_layer.weight_varience = np.zeros_like(current_layer.weights) # pyright: ignore[reportUnknownMemberType]
+            current_layer.bias_varience = np.zeros_like(current_layer.biases) # pyright: ignore[reportUnknownMemberType]
+            current_layer.acc_w_grad = np.zeros_like(current_layer.weights) # pyright: ignore[reportUnknownMemberType]
+            current_layer.acc_b_grad = np.zeros_like(current_layer.biases) # pyright: ignore[reportUnknownMemberType]
+    
+    def run(self, inputs: np.ndarray) -> np.ndarray:
+        """
+        You can use this function to get an output
+        from the network based on your input.
 
-    def run(self, inputs: np.ndarray):
+        Don't forget to call either `train_model()` or
+        `init_weights()` before using this function!
+        """
+        
         for layer in self.layers:
             inputs = layer.forward(inputs)
 
         return inputs
     
     def train_epoch(self, batches: list[Batch]) -> float:
+        """
+        A function used to perform a single training session
+        (each piece of training data is used once), which
+        returns the loss after the training
+        """
         total_loss = 0
         num_processed = 0
 
@@ -90,15 +148,20 @@ class NeuralNetwork:
             gradient = self.loss.derivative(outputs, batch.y)
 
             for layer in reversed(self.layers):
-                gradient = layer.backward(gradient, self.learning_rate, self.momentum, self.clip_value, layer == self.layers[-1])
+                gradient = layer.backward(gradient, self.optimizer, self.clip_value, layer == self.layers[-1])
 
         return float(total_loss / num_processed)
 
     def train_model(self, batches: list[Batch], epochs: int = 5):
+        """
+        A function used to train the neural network on
+        batches of train data. This will make it a
+        specialized model
+        """
         # keep track of time
         start_time = time.time()
 
-        self.init_weigths(batches[0].y.shape[1])
+        self.init_weights(batches[0].y.shape[1])
 
         # Train epochs
         for epoch in range(epochs):
@@ -120,7 +183,11 @@ class NeuralNetwork:
         duration = time.time() - start_time
         print(f"{theme.TIME}Training took {theme.RESET + theme.VALUE}{round(duration, 2)}s")
     
-    def test_model(self, input_data: list[Batch]):
+    def test_model(self, input_data: list[Batch]) -> float:
+        """
+        Get the accuracy of the current model on the input
+        batches of test data
+        """
         num_correct = 0
         num_tried = 0
         for batch in input_data:
@@ -134,6 +201,11 @@ class NeuralNetwork:
         return num_correct / num_tried
     
     def interactive(self):
+        """
+        A special mode meant for MNIST trained models only,
+        where you can draw input data to see how the model
+        classifies it
+        """
         try:
             from .Interactive import interactive_mode
             interactive_mode(self)
@@ -141,7 +213,15 @@ class NeuralNetwork:
             raise RuntimeError("Interactive mode libraries not installed.")
     
 def save_model(network: NeuralNetwork, filename: str = "data/model.pkl", compression_level: int = 3):
+    """
+    A function to dump a trained model to a `.pkl` file
+    """
     joblib.dump(network, filename, compress=compression_level) # pyright: ignore[reportUnknownMemberType]
 
-def load_model(filename: str = "data/model.pkl"):
+def load_model(filename: str = "data/model.pkl") -> NeuralNetwork:
+    """
+    A function to load a neural network from a `.pkl` file
+    """
     return joblib.load(filename) # pyright: ignore[reportUnknownMemberType]
+
+__all__ = ["Batch", "create_batches", "NeuralNetwork", "save_model", "load_model"]

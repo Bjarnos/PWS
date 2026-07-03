@@ -4,9 +4,9 @@ import numpy
 import jax.numpy as np
 import pygame
 import pygame.freetype
-import matplotlib.cm as cm
+import matplotlib.pyplot as pyplot
 
-viridis = cm.get_cmap("viridis") # type: ignore
+viridis = pyplot.get_cmap("viridis") # type: ignore
 
 class Window:
     def __init__(self):

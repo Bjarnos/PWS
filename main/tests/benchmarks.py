@@ -1,7 +1,7 @@
 # type: ignore
 from neural_network.NeuralNetwork import *
 from neural_network.Datasets import MNIST
-from neural_network.Layers import Dense
+from neural_network.Layers import *
 from neural_network.ActivationFunctions import *
 from neural_network.LossFunctions import *
 from neural_network.Optimizers import *
@@ -52,7 +52,7 @@ for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian,
                 Dense(input_size=256, activation=Softmax()) # hidden -> output layer
                 ])
             
-            times.append([activation.__name__, loss.__name__, return_value[0], return_value[1]])
+            times.append([activation.__name__, loss.__name__, optimizer.__name__, return_value[0], return_value[1]])
 
 with open("benchmarks.json", "w") as file:
     json.dump(times, file)

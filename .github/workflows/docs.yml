@@ -37,12 +37,12 @@ jobs:
           pip install -e .[interactive] pdoc
 
       - name: Build documentation
-        run: python -m pdoc --docformat=markdown --math --mermaid -o docs main/neural_network
+        run: python -m pdoc --docformat=markdown --math --mermaid -o docs main/neural_network/__init__.py
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/neural_network
+          path: docs
 
   deploy:
     needs: build

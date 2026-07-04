@@ -1,3 +1,4 @@
+from typing import ClassVar
 from .MNIST import MNIST
 
 class FASHION_MNIST(MNIST):
@@ -9,13 +10,13 @@ class FASHION_MNIST(MNIST):
     piece of clothing.
     
     The Fashion-MNIST dataset inherits all members
-    of the MNIST dataset
+    of the MNIST dataset.
     """
 
-    default_data_dir: str = "data/fashion-mnist"
-    default_kaggle_name: str = "zalando-research/fashionmnist"
+    default_data_dir: ClassVar[str] = "data/fashion-mnist"
+    default_kaggle_name: ClassVar[str] = "zalando-research/fashionmnist"
 
-    data_sources: dict[str, str] = {
+    data_sources: ClassVar[dict[str, str]] = {
         "training_images": "train-images-idx3-ubyte",
         "test_images": "t10k-images-idx3-ubyte",
         "training_labels": "train-labels-idx1-ubyte",

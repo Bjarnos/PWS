@@ -41,9 +41,7 @@ class Layer():
 class Dense(Layer):
     """
     A fully connected layer where each neuron of the current
-    layer is connected to each neuron of the previous layer
-
-    
+    layer is connected to each neuron of the previous layer.
     """
 
     input_size: int
@@ -77,13 +75,11 @@ class Dense(Layer):
         self.acc_b_grad = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
     
     def forward(self, inputs: np.ndarray) -> np.ndarray:
-        "private function, used for a feed-forward pass"
         self.inputs = inputs
         self.z = self.inputs @ self.weights + self.biases
         return self.activation.calculate(self.z)
     
     def backward(self, output_gradient: np.ndarray, optimizer: Optimizer, clip_value: float, is_last: bool = False) -> np.ndarray:
-        "private function, used for backpropagation"
         dZ = output_gradient * (1.0 if is_last else self.activation.derivative(self.z))
         
         batch_size = self.inputs.shape[0]

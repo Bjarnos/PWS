@@ -15,9 +15,11 @@ network = NeuralNetwork(loss=MeanSquaredError(), optimizer=SGD(), layers=[
     Dense(input_size=256, activation=Softmax()) # hidden -> output layer
     ])
 batches = create_batches(mnist.train_images, mnist.train_labels, 32)
-network.train_model(batches, epochs=10)
-save_model(network, "data/fashion-mnist.pkl")
 
-# Test the model:
-test_batches = create_batches(mnist.test_images, mnist.test_labels, 16)
-print(f"Final accuracy: {(network.test_model(test_batches)*100):.4}%")
+if __name__ == "__main__":
+    network.train_model(batches, epochs=10)
+    save_model(network, "data/fashion-mnist.pkl")
+
+    # Test the model:
+    test_batches = create_batches(mnist.test_images, mnist.test_labels, 16)
+    print(f"Final accuracy: {(network.test_model(test_batches)*100):.4}%")

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, ClassVar
 import os
 import shutil
 import kagglehub # pyright: ignore[reportMissingTypeStubs]
@@ -12,19 +12,16 @@ class Dataset:
     for typing.</em>
     """
     
-    default_data_dir: str = ""
-    "@private"
-    default_kaggle_name: str = ""
-    "@private"
-    data_sources: dict[str, str] = {}
-    "@private"
+    default_data_dir: ClassVar[str] = ""
+    default_kaggle_name: ClassVar[str] = ""
+    data_sources: ClassVar[dict[str, str]] = {}
 
     def __init__(self, data_dir: Optional[str] = None, kaggle_name: Optional[str] = None):
         """
         You can set a custom `data_dir`, which is where the downloaded
         files will be stored, and a custom `kaggle_name`, which is the
         [kaggle](https://www.kaggle.com/datasets) repository where the
-        files are downloaded from
+        files are downloaded from.
         """
 
         if not data_dir:

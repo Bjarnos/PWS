@@ -21,7 +21,7 @@ from .Colors import theme
 class Batch:
     """
     A batch is multiple pieces of training data packed in one
-    object
+    object.
 
     <em>You should not use this class directly, but rather
     [`create_batches()`](/neural_network/NeuralNetwork.html#create_batches).
@@ -37,7 +37,7 @@ class Batch:
 def create_batches(x: np.ndarray, y: np.ndarray, size: int = 256) -> list[Batch]:
     """
     A function used to create batches, which you can then pass into
-    `NeuralNetwork.train_model()`
+    `NeuralNetwork.train_model()`.
     """
 
     num_batches = int(np.ceil(x.shape[0] / size))
@@ -70,7 +70,7 @@ class NeuralNetwork:
 
         <em>`train_model()` already calls this function for you, you will
         only need it if you don't want to train the network (because you
-        want it to return random values)</em>
+        want it to return random values).</em>
         """
         # Generate weight and bias lists
         for i in range(len(self.layers)):
@@ -111,7 +111,7 @@ class NeuralNetwork:
         """
         A function used to perform a single training session
         (each piece of training data is used once), which
-        returns the loss after the training
+        returns the loss after the training.
         """
         total_loss = 0
         num_processed = 0
@@ -156,7 +156,7 @@ class NeuralNetwork:
         """
         A function used to train the neural network on
         batches of train data. This will make it a
-        specialized model
+        specialized model.
         """
         # keep track of time
         start_time = time.time()
@@ -186,7 +186,7 @@ class NeuralNetwork:
     def test_model(self, input_data: list[Batch]) -> float:
         """
         Get the accuracy of the current model on the input
-        batches of test data
+        batches of test data.
         """
         num_correct = 0
         num_tried = 0
@@ -204,7 +204,7 @@ class NeuralNetwork:
         """
         A special mode meant for MNIST trained models only,
         where you can draw input data to see how the model
-        classifies it
+        classifies it.
         """
         try:
             from .Interactive import interactive_mode
@@ -213,15 +213,11 @@ class NeuralNetwork:
             raise RuntimeError("Interactive mode libraries not installed.")
     
 def save_model(network: NeuralNetwork, filename: str = "data/model.pkl", compression_level: int = 3):
-    """
-    A function to dump a trained model to a `.pkl` file
-    """
+    "A function to dump a trained model to a `.pkl` file."
     joblib.dump(network, filename, compress=compression_level) # pyright: ignore[reportUnknownMemberType]
 
 def load_model(filename: str = "data/model.pkl") -> NeuralNetwork:
-    """
-    A function to load a neural network from a `.pkl` file
-    """
+    "A function to load a neural network from a `.pkl` file."
     return joblib.load(filename) # pyright: ignore[reportUnknownMemberType]
 
 __all__ = ["Batch", "create_batches", "NeuralNetwork", "save_model", "load_model"]

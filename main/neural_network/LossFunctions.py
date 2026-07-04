@@ -26,7 +26,7 @@ class LossFunction:
 class MeanSquaredError(LossFunction):
     """
     A loss function which calculates the average of the
-    squares of the errors (predicted - expected)
+    squares of the errors (predicted - expected).
     """
 
     def calculate(self, predicted: np.ndarray, expected: np.ndarray):
@@ -40,7 +40,7 @@ class MeanSquaredError(LossFunction):
 class MeanAbsoluteError(LossFunction):
     """
     A loss function which calculates the average of the
-    absolutes of the errors
+    absolutes of the errors.
     """
 
     def calculate(self, predicted: np.ndarray, expected: np.ndarray):
@@ -53,7 +53,7 @@ class MeanAbsoluteError(LossFunction):
     
 class CategorialCrossEntropy(LossFunction):
     """
-    A loss function for networks with multiple categories
+    A loss function for networks with multiple categories.
     """
 
     def __init__(self, epsilon: float = 1e-9):
@@ -70,7 +70,7 @@ class CategorialCrossEntropy(LossFunction):
 class KLDivergence(LossFunction):
     """
     A loss function which calculates the distance between
-    two probability distributions
+    two probability distributions.
     """
 
     def __init__(self, epsilon: float = 1e-9):

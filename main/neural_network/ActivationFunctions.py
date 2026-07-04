@@ -31,7 +31,10 @@ class ActivationFunction:
 class Linear(ActivationFunction):
     """
     A simple activation function which returns
-    the input value unchanged
+    the input value unchanged.
+
+    The Linear function is best used on the output
+    layer. In hidden layers it won't be effective.
     """
 
     def __init__(self, sharpness: float = 1):
@@ -49,7 +52,10 @@ class ReLU(ActivationFunction):
     """
     <em>Rectified Linear Unit</em><br>
     An activation function which returns the
-    non-negative part of its input
+    non-negative part of its input.
+
+    The ReLU function, and its variations, are
+    best used in hidden layers.
     """
 
     def __init__(self, sharpness: float = 1):
@@ -67,7 +73,11 @@ class LeakyReLU(ActivationFunction):
     """
     <em>Leaky Rectified Linear Unit</em><br>
     An activation function that allows a small,
-    non-zero gradient when the input is negative
+    non-zero gradient when the input is negative.
+
+    Standard ReLU can sometimes get neurons inactive
+    permanently if they become 0. LeakyReLU serves as
+    an alternative if this happens.
     """
 
     def __init__(self, slope: float = 0.01, sharpness: float = 1):
@@ -84,7 +94,7 @@ class LeakyReLU(ActivationFunction):
 
 class Softplus(ActivationFunction):
     """
-    A smooth approximation of the ReLU function
+    A smooth approximation of the ReLU function.
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
@@ -98,7 +108,7 @@ class Softplus(ActivationFunction):
 class ELU(ActivationFunction):
     """
     A variant of the ReLU function which allows
-    for a negative and near-zero input
+    for a negative and near-zero input.
     """
 
     def __init__(self, sharpness: float = 1):
@@ -115,7 +125,7 @@ class ELU(ActivationFunction):
 class SELU(ActivationFunction):
     """
     A variant of the ReLU function which keeps the
-    output normalized for more stability
+    output normalized for more stability.
     """
 
     def __init__(self, sharpness: float = 1, scale: float = 1):
@@ -134,7 +144,7 @@ class GELU(ActivationFunction):
     """
     An activation function which returns the
     probability that a Gaussian random variable
-    is less than or equal to x
+    is less than or equal to x.
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
@@ -151,7 +161,7 @@ class GELU(ActivationFunction):
 class Gaussian(ActivationFunction):
     """
     An activation function that maps inputs to outputs
-    based on a Gaussian distribution
+    based on a Gaussian distribution.
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
@@ -165,7 +175,11 @@ class Gaussian(ActivationFunction):
 class Sigmoid(ActivationFunction):
     """
     An activation function that maps inputs to a
-    value between 0 and 1
+    value between 0 and 1.
+
+    The Sigmoid function is best used on the output
+    layer. In hidden layers it may cause negative
+    effects.
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
@@ -180,7 +194,7 @@ class Sigmoid(ActivationFunction):
 class Softsign(ActivationFunction):
     """
     An activation function that maps inputs to a
-    value between -1 and 1
+    value between -1 and 1.
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
@@ -194,7 +208,7 @@ class Softsign(ActivationFunction):
 class Swish(ActivationFunction):
     """
     An activation function used to interpolate between
-    a linear function and the ReLU function
+    a linear function and the ReLU function.
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
@@ -209,7 +223,9 @@ class Swish(ActivationFunction):
 class Tanh(ActivationFunction):
     """
     An activation function that maps inputs to a
-    value between -1 and 1
+    value between -1 and 1.
+
+    The Tanh function is best used in hidden layers.
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
@@ -223,7 +239,10 @@ class Tanh(ActivationFunction):
 class Softmax(ActivationFunction):
     """
     An activation function that maps a vector of inputs
-    to values between 0 and 1 with a total sum of 1
+    to values between 0 and 1 with a total sum of 1.
+
+    The Softmax function can only be used on the output
+    layer.
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:

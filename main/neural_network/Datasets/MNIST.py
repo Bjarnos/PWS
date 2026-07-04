@@ -1,3 +1,4 @@
+from typing import ClassVar
 import os
 import jax.numpy as np
 import numpy
@@ -12,18 +13,18 @@ class MNIST(Dataset):
     10.000 test images+labels, each representing a number.
     """
     
-    default_data_dir: str = "data/mnist"
-    "The value of `data_dir` when not set"
-    default_kaggle_name: str = "hojjatk/mnist-dataset"
-    "The value of `kaggle_name` when not set"
+    default_data_dir: ClassVar[str] = "data/mnist"
+    "The value of `data_dir` when not set."
+    default_kaggle_name: ClassVar[str] = "hojjatk/mnist-dataset"
+    "The value of `kaggle_name` when not set."
 
-    data_sources: dict[str, str] = {
+    data_sources: ClassVar[dict[str, str]] = {
         "training_images": "train-images-idx3-ubyte/train-images-idx3-ubyte",
         "test_images": "t10k-images-idx3-ubyte/t10k-images-idx3-ubyte",
         "training_labels": "train-labels-idx1-ubyte/train-labels-idx1-ubyte",
         "test_labels": "t10k-labels-idx1-ubyte/t10k-labels-idx1-ubyte",
     }
-    "The files required to load this dataset from"
+    "The files required to load this dataset from."
 
     train_images: numpy.ndarray
     train_labels: numpy.ndarray
@@ -57,14 +58,12 @@ class MNIST(Dataset):
         self.test_labels = np.asarray(self.test_labels) # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
 
     def get_input_size(self):
-        """
-        Returns the required input_size of the first layer
-        """
+        "Returns the required input_size of the first layer."
         return len(self.train_images[0])
     
     def get_output_size(self):
         """
-        Returns the required output_size of the final layer
+        Returns the required output_size of the final layer.
         (to match with the labels)
         """
         return len(self.train_labels[0])

@@ -43,9 +43,9 @@ def benchmark(network_loss: LossFunction, network_optimizer: Optimizer, network_
     
     return (t4-t3, final_acc)
 
-# Mean Absolute Error needs huge learning rates like 0.05 or 0.1 but we can't always test on that
-
 times = []
+total_runs = (12*4)*(2*7) + (12*4)*(3*8)
+runs = 0
 for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian, Sigmoid, Softsign, Swish, Tanh]:
     for loss in [MeanSquaredError, MeanAbsoluteError, CategorialCrossEntropy, KLDivergence]:
         for optimizer in [SGD, SGDM, AdaGrad, RMSprop, Adam]:
@@ -61,6 +61,9 @@ for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian,
                     ])
             
                 times.append([activation.__name__, loss.__name__, optimizer.__name__, learning_rate, return_value[0], return_value[1]])
+
+                runs += 1
+                print(f"Completed: {runs}/{total_runs}")
 
 with open("benchmarks.json", "w") as file:
     json.dump(times, file)

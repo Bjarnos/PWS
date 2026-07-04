@@ -20,10 +20,10 @@ class SGD(Optimizer):
     """
     <em>Stochastic Gradient Descent</em><br>
     An optimizer which updates the model parameters based on
-    the gradient
+    the gradient.
     """
 
-    def __init__(self, learning_rate: float = 0.01):
+    def __init__(self, learning_rate: float = 0.1):
         self.learning_rate = learning_rate
 
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
@@ -40,10 +40,10 @@ class SGDM(Optimizer):
     """
     <em>Stochastic Gradient Descent with Momentum</em><br>
     An optimizer based on SGD with a momentum to smooth
-    out the updates
+    out the updates.
     """
 
-    def __init__(self, learning_rate: float = 0.01, momentum: float = 0.9):
+    def __init__(self, learning_rate: float = 0.5, momentum: float = 0.9):
         self.learning_rate = learning_rate
         self.momentum = momentum
 
@@ -63,7 +63,7 @@ class AdaGrad(Optimizer):
     """
     <em>Adaptive Gradients</em><br>
     An optimizer which adapts the learning rate for parameters
-    based on its historical gradients
+    based on its historical gradients.
     """
 
     def __init__(self, learning_rate: float = 0.01, epsilon: float = 1e-9):
@@ -88,10 +88,10 @@ class RMSprop(Optimizer):
     """
     <em>Root Mean Square Propagation</em><br>
     An adapted version of AdaGrad without rapidly shrinking
-    learning rates
+    learning rates.
     """
 
-    def __init__(self, learning_rate: float = 0.001, decay: float = 0.9, epsilon: float = 1e-9):
+    def __init__(self, learning_rate: float = 0.0005, decay: float = 0.9, epsilon: float = 1e-9):
         self.learning_rate = learning_rate
         self.decay = decay
         self.epsilon = epsilon
@@ -113,7 +113,7 @@ class RMSprop(Optimizer):
 class Adam(Optimizer):
     """
     <em>Adaptive Moment Estimation</em><br>
-    A combined version of the Momentum and RMSprop optimizers
+    A combined version of the Momentum and RMSprop optimizers.
     """
 
     def __init__(self, learning_rate: float = 0.001, decay_ma: float = 0.9, decay_sq: float = 0.999, epsilon: float = 1e-9):

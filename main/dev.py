@@ -10,7 +10,7 @@ from neural_network.Optimizers import *
 mnist = FASHION_MNIST()
 
 # Train a new model:
-network = NeuralNetwork(loss=MeanSquaredError(), optimizer=SGDM(), layers=[
+network = NeuralNetwork(loss=MeanSquaredError(), optimizer=SGD(0.2), layers=[
     Dense(input_size=mnist.get_input_size(), activation=ReLU()), # input -> hidden layer
     Dense(input_size=256, activation=Softmax()) # hidden -> output layer
     ])

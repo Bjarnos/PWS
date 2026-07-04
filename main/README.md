@@ -159,7 +159,7 @@ to the final error. The backward pass moves from the output layer all the way ba
 
 ## Optimizers
 
-Once the gradients are found, the [optimizer](/neural_network/Optimizers.html) steps in to tweak the
+Once the gradients are found, the [<em>optimizer</em>](/neural_network/Optimizers.html) steps in to tweak the
 weights. When you train a network you usually record your <em>loss</em>, the amount of your errors.
 Just like loss functions, [optimizers](/neural_network/Optimizers.html) are meant to make
 your loss as close to zero as possible. 

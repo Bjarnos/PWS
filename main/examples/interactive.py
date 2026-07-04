@@ -1,12 +1,17 @@
-from .NeuralNetwork import NeuralNetwork
+# type: ignore
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    raise RuntimeError("Interactive mode libraries not installed.")
 
 import numpy
 import jax.numpy as np
 import pygame
 import pygame.freetype
-import matplotlib.pyplot as pyplot
 
-viridis = pyplot.get_cmap("viridis") # type: ignore
+from neural_network.NeuralNetwork import *
+
+viridis = plt.get_cmap("viridis")
 
 class Window:
     def __init__(self):
@@ -29,7 +34,7 @@ class Window:
         self.running = True
         self.drawing = False
 
-        self.prediction: np.ndarray = numpy.zeros(10) # pyright: ignore[reportAttributeAccessIssue]
+        self.prediction: np.ndarray = numpy.zeros(10)
 
         self.grid = numpy.zeros((self.GRID_SIZE, self.GRID_SIZE))
 
@@ -44,8 +49,8 @@ class Window:
             for x in range(self.GRID_SIZE):
                 value: float = self.grid[y, x]  # float 0–1
 
-                r, g, b, _ = viridis(value)  # pyright: ignore[reportUnknownVariableType] # returns RGBA (0–1)
-                color = (int(r * 255), int(g * 255), int(b * 255)) # pyright: ignore[reportUnknownArgumentType]
+                r, g, b, _ = viridis(value) # returns RGBA (0–1)
+                color = (int(r * 255), int(g * 255), int(b * 255))
                 rect = pygame.Rect(x * self.PIXEL_SIZE, y * self.PIXEL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE)
                 pygame.draw.rect(self.screen, color, rect)
 
@@ -104,7 +109,9 @@ class Window:
     def quit():
         pygame.quit()
 
-def interactive_mode(network: NeuralNetwork):
+if __name__ == "__main__":
+    network = load_model("data/test.pkl")
+
     timer = 0
     timer_dur = 10
 
@@ -118,7 +125,7 @@ def interactive_mode(network: NeuralNetwork):
         if timer > timer_dur:
             timer = 0
 
-            image = np.array([ # pyright: ignore[reportUnknownMemberType]
+            image = np.array([
                 window.get_grid()
             ]).reshape(-1, 28 * 28).copy()
             

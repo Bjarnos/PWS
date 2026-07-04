@@ -17,9 +17,9 @@ from neural_network.Optimizers import SGD
 # input: xyr (radius), output: rgb (sigmoid returns 0-1)
 network = NeuralNetwork(loss=MeanSquaredError(), optimizer=SGD(), layers=[
     Dense(input_size=3, activation=ReLU()),
-    Dense(input_size=32, activation=ReLU()),
-    Dense(input_size=32, activation=ReLU()),
-    Dense(input_size=32, activation=ReLU()),
+    Dense(input_size=32, activation=Tanh()),
+    Dense(input_size=32, activation=Tanh()),
+    Dense(input_size=32, activation=Tanh()),
     Dense(input_size=32, activation=Sigmoid())
 ])
 

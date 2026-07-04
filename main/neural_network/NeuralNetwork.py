@@ -200,18 +200,6 @@ class NeuralNetwork:
         
         return num_correct / num_tried
     
-    def interactive(self):
-        """
-        A special mode meant for MNIST trained models only,
-        where you can draw input data to see how the model
-        classifies it.
-        """
-        try:
-            from .Interactive import interactive_mode
-            interactive_mode(self)
-        except ImportError:
-            raise RuntimeError("Interactive mode libraries not installed.")
-    
 def save_model(network: NeuralNetwork, filename: str = "data/model.pkl", compression_level: int = 3):
     "A function to dump a trained model to a `.pkl` file."
     joblib.dump(network, filename, compress=compression_level) # pyright: ignore[reportUnknownMemberType]

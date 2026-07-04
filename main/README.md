@@ -12,7 +12,7 @@ git clone https://github.com/Bjarnos/PWS && cd PWS/main
 pip install -e .
 ```
 
-Or, to install the libraries needed for interactive mode as well:
+Or, to install the libraries needed for the example scripts as well:
 ```sh
 git clone https://github.com/Bjarnos/PWS && cd PWS/main
 pip install -e .[interactive]

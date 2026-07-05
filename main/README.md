@@ -63,12 +63,12 @@ cd main
 
 Then, to live update the website while editing:
 ```sh
-python -m pdoc --docformat=markdown --math --mermaid neural_network
+python -m pdoc --docformat=markdown --math --mermaid -t docs_templates neural_network
 ```
 
 Or if you just want to build the output html:
 ```sh
-python -m pdoc --docformat=markdown --math --mermaid -o ./docs neural_network
+python -m pdoc --docformat=markdown --math --mermaid -t docs_templates -o ./docs neural_network
 ```
 
 # Research

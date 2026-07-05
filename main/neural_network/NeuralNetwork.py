@@ -29,10 +29,15 @@ class Batch:
     """
 
     def __init__(self, x_train: np.ndarray, y_train: np.ndarray):
+        """
+        You can directly create a single batch with a JAX.numpy array of
+        input data and a JAX.numpy array of matching labels.<br>@advanced
+        """
+
         self.x: np.ndarray = np.asarray(x_train) # pyright: ignore[reportUnknownMemberType]
-        "A numpy array of multiple pieces of training data"
+        "Reference to the input data<br>@advanced"
         self.y: np.ndarray = np.asarray(y_train) # pyright: ignore[reportUnknownMemberType]
-        "A numpy array of multiple training labels"
+        "Reference to the matching labels<br>@advanced"
 
 def create_batches(x: np.ndarray, y: np.ndarray, size: int = 256) -> list[Batch]:
     """
@@ -54,13 +59,13 @@ class NeuralNetwork:
 
     def __init__(self, loss: LossFunction, optimizer: Optimizer, layers: Sequence[Layer]):
         self.loss: LossFunction = loss
-        "A reference to the set loss function"
+        "Reference to the set loss function<br>@advanced"
         self.optimizer: Optimizer = optimizer
-        "A reference to the set optimizer"
+        "Reference to the set optimizer<br>@advanced"
         self.layers: Sequence[Layer] = layers
-        "A reference to the set layers"
+        "Reference to the set layers<br>@advanced"
         self.clip_value: float = 5.0
-        "The maximum value any training gradient can reach"
+        "The maximum value any training gradient can reach<br>@advanced"
 
     def init_weights(self, output_layer_size: int):
         """
@@ -111,7 +116,7 @@ class NeuralNetwork:
         """
         A function used to perform a single training session
         (each piece of training data is used once), which
-        returns the loss after the training.
+        returns the loss after the training.<br>@advanced
         """
         total_loss = 0
         num_processed = 0

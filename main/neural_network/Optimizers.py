@@ -1,5 +1,12 @@
+"""
+We recommend to turn on "Show Advanced APIs" to see all formulas.
+
+TODO: move all formules to the base class so they are always shown.
+
+Used source: https://www.mdpi.com/2227-7390/11/11/2466
+"""
+
 import jax.numpy as np
-# source: https://www.mdpi.com/2227-7390/11/11/2466
 
 class Optimizer:
     """
@@ -13,7 +20,7 @@ class Optimizer:
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
                   acc_w_grad: np.ndarray, acc_b_grad: np.ndarray, weights: np.ndarray, biases: np.ndarray, 
                   w_momentum: np.ndarray, b_momentum: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        "@private"
+        "The method to calculate this optimizer.<br>@advanced"
         return (weights, biases)
 
 class SGD(Optimizer):
@@ -25,11 +32,12 @@ class SGD(Optimizer):
 
     def __init__(self, learning_rate: float = 0.1):
         self.learning_rate = learning_rate
+        "Reference to the set learning rate<br>@advanced"
 
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
                   acc_w_grad: np.ndarray, acc_b_grad: np.ndarray, weights: np.ndarray, biases: np.ndarray, 
                   w_momentum: np.ndarray, b_momentum: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        r'''$$\theta_{t+1}=\theta_t-\alpha g_t$$'''
+        r"""$$\theta_{t+1}=\theta_t-\alpha g_t$$<br>@advanced"""
         
         return (
             weights - self.learning_rate * w_gradient,
@@ -45,12 +53,14 @@ class SGDM(Optimizer):
 
     def __init__(self, learning_rate: float = 0.5, momentum: float = 0.9):
         self.learning_rate = learning_rate
+        "Reference to the set learning rate<br>@advanced"
         self.momentum = momentum
+        "Reference to the set momentum<br>@advanced"
 
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
                   acc_w_grad: np.ndarray, acc_b_grad: np.ndarray, weights: np.ndarray, biases: np.ndarray, 
                   w_momentum: np.ndarray, b_momentum: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        r'''$$m_{t+1}=\mu m_t + (1-\mu)g_t, \\ \theta_{t+1}=\theta_t-\alpha m_{t+1}$$'''
+        r"""$$m_{t+1}=\mu m_t + (1-\mu)g_t, \\ \theta_{t+1}=\theta_t-\alpha m_{t+1}$$<br>@advanced"""
 
         w_momentum = (1 - self.momentum) * w_gradient + self.momentum * w_momentum
         b_momentum = (1 - self.momentum) * b_gradient + self.momentum * b_momentum
@@ -68,12 +78,14 @@ class AdaGrad(Optimizer):
 
     def __init__(self, learning_rate: float = 0.01, epsilon: float = 1e-9):
         self.learning_rate = learning_rate
+        "Reference to the set learning rate<br>@advanced"
         self.epsilon = epsilon
+        "Reference to the set epsilon value<br>@advanced"
 
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
                   acc_w_grad: np.ndarray, acc_b_grad: np.ndarray, weights: np.ndarray, biases: np.ndarray, 
                   w_momentum: np.ndarray, b_momentum: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        r'''$$G_{t+1}=G_t+g_t^2, \\ \theta_{t+1}=\theta_t-\frac{\alpha}{\sqrt{G_{t+1}}+\epsilon}g_t$$'''
+        r"""$$G_{t+1}=G_t+g_t^2, \\ \theta_{t+1}=\theta_t-\frac{\alpha}{\sqrt{G_{t+1}}+\epsilon}g_t$$<br>@advanced"""
 
         acc_w_grad = acc_w_grad + np.square(w_gradient)
         acc_b_grad = acc_b_grad + np.square(b_gradient)
@@ -93,13 +105,16 @@ class RMSprop(Optimizer):
 
     def __init__(self, learning_rate: float = 0.0005, decay: float = 0.9, epsilon: float = 1e-9):
         self.learning_rate = learning_rate
+        "Reference to the set learning rate<br>@advanced"
         self.decay = decay
+        "Reference to the set decay<br>@advanced"
         self.epsilon = epsilon
+        "Reference to the set epsilon value<br>@advanced"
 
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
                   acc_w_grad: np.ndarray, acc_b_grad: np.ndarray, weights: np.ndarray, biases: np.ndarray, 
                   w_momentum: np.ndarray, b_momentum: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        r'''$$v_t=\gamma v_{t-1}+(1-\gamma)g^2_t, \\ \theta_{t+1}=\theta_t - \frac{\alpha}{\sqrt{v_t+\epsilon}}g_t$$'''
+        r"""$$v_t=\gamma v_{t-1}+(1-\gamma)g^2_t, \\ \theta_{t+1}=\theta_t - \frac{\alpha}{\sqrt{v_t+\epsilon}}g_t$$<br>@advanced"""
 
         acc_w_grad = self.decay * acc_w_grad + (1 - self.decay) * np.square(w_gradient)
         acc_b_grad = self.decay * acc_b_grad + (1 - self.decay) * np.square(b_gradient)
@@ -118,14 +133,18 @@ class Adam(Optimizer):
 
     def __init__(self, learning_rate: float = 0.001, decay_ma: float = 0.9, decay_sq: float = 0.999, epsilon: float = 1e-9):
         self.learning_rate = learning_rate
+        "Reference to the set learning rate<br>@advanced"
         self.decay_ma = decay_ma
+        "Reference to the set decay_ma<br>@advanced"
         self.decay_sq = decay_sq
+        "Reference to the set decay_sq<br>@advanced"
         self.epsilon = epsilon
+        "Reference to the set epsilon value<br>@advanced"
 
     def calculate(self, w_gradient: np.ndarray, b_gradient: np.ndarray, w_var: np.ndarray, b_var: np.ndarray, 
                   acc_w_grad: np.ndarray, acc_b_grad: np.ndarray, weights: np.ndarray, biases: np.ndarray, 
                   w_momentum: np.ndarray, b_momentum: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        r'''$$m_t=\beta_1m_{t-1}+(1-\beta_1)g_t, \\ v_t=\beta_2v_{t-1}+(1-\beta_2)g^2_t, \\ \hat{m_t}=\frac{m_t}{(1-\beta_1)}, \\ \hat{v_t}=\frac{v_t}{(1-\beta_2)}, \\ \theta_t=\theta_{t-1}-\alpha\frac{\hat{m_t}}{\sqrt{\hat{v_t}}+\epsilon}$$'''
+        r"""$$m_t=\beta_1m_{t-1}+(1-\beta_1)g_t, \\ v_t=\beta_2v_{t-1}+(1-\beta_2)g^2_t, \\ \hat{m_t}=\frac{m_t}{(1-\beta_1)}, \\ \hat{v_t}=\frac{v_t}{(1-\beta_2)}, \\ \theta_t=\theta_{t-1}-\alpha\frac{\hat{m_t}}{\sqrt{\hat{v_t}}+\epsilon}$$<br>@advanced"""
 
         w_momentum = self.decay_ma * w_momentum + (1 - self.decay_ma) * w_gradient
         b_momentum = self.decay_ma * b_momentum + (1 - self.decay_ma) * b_gradient

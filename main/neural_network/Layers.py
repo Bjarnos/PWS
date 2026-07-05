@@ -1,4 +1,3 @@
-# source: https://github.com/joohei/mnist-from-scratch/blob/main
 from .ActivationFunctions import ActivationFunction
 from .Optimizers import Optimizer
 import jax.numpy as np
@@ -13,29 +12,39 @@ class Layer():
     """
 
     input_size: int
-    "The size of the layer before the current"
+    "The size of the layer before the current<br>@advanced"
     output_size: int
-    "The size of the current layer"
+    "The size of the current layer<br>@advanced"
     activation: ActivationFunction
-    "A reference to the activation function of this layer"
+    "Reference to the activation function of this layer<br>@advanced"
 
     inputs: np.ndarray
+    "@advanced"
     z: np.ndarray
+    "@advanced"
     weights: np.ndarray
+    "@advanced"
     biases: np.ndarray
+    "@advanced"
     weight_momentum: np.ndarray
+    "@advanced"
     bias_momentum: np.ndarray
+    "@advanced"
     weight_varience: np.ndarray
+    "@advanced"
     bias_varience: np.ndarray
+    "@advanced"
     acc_w_grad: np.ndarray
+    "@advanced"
     acc_b_grad: np.ndarray
+    "@advanced"
     
     def forward(self, inputs: np.ndarray) -> np.ndarray:
-        "@private"
+        "The method for a single forward pass.<br>@advanced"
         return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
     
     def backward(self, output_gradient: np.ndarray, optimizer: Optimizer, clip_value: float, is_last: bool = False) -> np.ndarray:
-        "@private"
+        "The method for a single backward pass.<br>@advanced"
         return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
 
 class Dense(Layer):

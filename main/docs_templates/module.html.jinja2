@@ -1,0 +1,143 @@
+{% extends "default/module.html.jinja2" %}
+
+{% block style %}
+    {{ super() }}
+    <style>
+        .nav-buttons-container {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #dee2e6;
+            width: 100%;
+        }
+
+        .nav-buttons-container .pdoc-button {
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+            margin: 0 !important;
+        }
+        #toggle-advanced-btn {
+            width: 100%;
+            text-align: center;
+        }
+        
+        body.hide-advanced .is-advanced { 
+            display: none !important; 
+        }
+        
+        .is-advanced { 
+            border-left: 3px solid #ffcc00;
+            padding-left: 10px;
+            background-color: #fffdf5;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+    </style>
+{% endblock %}
+
+{% block module_list_link %}
+    {% set parentmodule = ".".join(module.modulename.split(".")[:-1]) %}
+    
+    {% if (parentmodule and parentmodule in all_modules) or not root_module_name %}
+        <div class="nav-buttons-container">
+            {{- super() -}}
+            <a id="toggle-advanced-btn" class="pdoc-button module-list-button" onclick="toggleAdvancedAPIs()">
+                Hide Advanced APIs
+            </a>
+        </div>
+    {% else %}
+        {{ super() }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <script>
+        function toggleAdvancedAPIs() {
+            const body = document.body;
+            const btn = document.getElementById('toggle-advanced-btn');
+            body.classList.toggle('hide-advanced');
+            
+            if (body.classList.contains('hide-advanced')) {
+                btn.innerText = 'Show Advanced APIs';
+                localStorage.setItem('hideAdvancedSetting', 'true');
+            } else {
+                btn.innerText = 'Hide Advanced APIs';
+                localStorage.setItem('hideAdvancedSetting', 'false');
+            }
+        }
+
+        function processAdvancedDocs() {
+            const docstrings = document.querySelectorAll('.docstring');
+            
+            docstrings.forEach(doc => {
+                if (doc.textContent.includes('@advanced')) {
+                    
+                    const classAttrWrapper = doc.closest('.classattr');
+                    
+                    if (classAttrWrapper) {
+                        classAttrWrapper.classList.add('is-advanced');
+                    } else {
+                        const parentSection = doc.closest('section');
+                        if (parentSection) {
+                            parentSection.classList.add('is-advanced');
+                        }
+                    }
+                    
+                    doc.innerHTML = doc.innerHTML.replace(/(?:<br\s*\/?>\s*){1,2}@advanced/gi, '');
+                }
+            });
+
+            const btn = document.getElementById('toggle-advanced-btn');
+            const savedSetting = localStorage.getItem('hideAdvancedSetting');
+
+            if (savedSetting === 'true') {
+                document.body.classList.add('hide-advanced');
+                if (btn) btn.innerText = 'Show Advanced APIs';
+            } else {
+                document.body.classList.remove('hide-advanced');
+                if (btn) btn.innerText = 'Hide Advanced APIs';
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", processAdvancedDocs);
+        } else {
+            processAdvancedDocs();
+        }
+    </script>
+    {{ super() }}
+{% endblock %}
+
+{% block variables %}
+    {% if module.variables %}
+        <h2>Variables</h2>
+        {% for v in module.variables %}
+            <div class="{% if '@advanced' in v.docstring %}is-advanced{% endif %}">
+                {{ show_variable(v) }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block functions %}
+    {% if module.functions %}
+        <h2>Functions</h2>
+        {% for f in module.functions %}
+            <div class="{% if '@advanced' in f.docstring %}is-advanced{% endif %}">
+                {{ show_func(f) }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block classes %}
+    {% if module.classes %}
+        <h2>Classes</h2>
+        {% for c in module.classes %}
+            <div class="{% if '@advanced' in c.docstring %}is-advanced{% endif %}">
+                {{ show_class(c) }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

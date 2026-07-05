@@ -13,8 +13,11 @@ class Dataset:
     """
     
     default_data_dir: ClassVar[str] = ""
+    "The value of `data_dir` when not set<br>@advanced"
     default_kaggle_name: ClassVar[str] = ""
+    "The value of `kaggle_name` when not set<br>@advanced"
     data_sources: ClassVar[dict[str, str]] = {}
+    "The files required to load this dataset from<br>@advanced"
 
     def __init__(self, data_dir: Optional[str] = None, kaggle_name: Optional[str] = None):
         """

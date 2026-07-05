@@ -3,6 +3,10 @@ Some functions below have a `sharpness` parameter. You can give this
 a value when instantiating the class to change how effective the
 function is.
 
+We recommend to turn on "Show Advanced APIs" to see all formulas.
+
+TODO: move all formules to the base class so they are always shown.
+
 Used source: https://github.com/jElhamm/Activation-Functions/
 """
 
@@ -21,11 +25,14 @@ class ActivationFunction:
         pass
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        "@private"
+        "The method to calculate this activation function.<br>@advanced"
         return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
 
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        "@private"
+        """
+        The method to calculate the derivative of this
+        activation function.<br>@advanced
+        """
         return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
 
 class Linear(ActivationFunction):
@@ -39,13 +46,14 @@ class Linear(ActivationFunction):
 
     def __init__(self, sharpness: float = 1):
         self.sharpness = sharpness
+        "Reference to the set sharpness value<br>@advanced"
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r"""$$\text{Linear}(x)=x$$"""
+        r"""$$\text{Linear}(x)=x$$<br>@advanced"""
         return x * self.sharpness
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r"""$$\text{Linear}'(x)=1$$"""
+        r"""$$\text{Linear}'(x)=1$$<br>@advanced"""
         return np.ones_like(x) * self.sharpness # pyright: ignore[reportUnknownMemberType]
     
 class ReLU(ActivationFunction):
@@ -60,13 +68,14 @@ class ReLU(ActivationFunction):
 
     def __init__(self, sharpness: float = 1):
         self.sharpness = sharpness
+        "Reference to the set sharpness value<br>@advanced"
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r"""$$\text{ReLU}(x)=\begin{cases}x, & \text{if } x > 0 \\\\0, & \text{if } x < 0\end{cases}$$"""
+        r"""$$\text{ReLU}(x)=\begin{cases}x, & \text{if } x > 0 \\\\0, & \text{if } x < 0\end{cases}$$<br>@advanced"""
         return np.maximum(0, x * self.sharpness)
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r"""$$\text{ReLU}'(x) = \begin{cases}1, & \text{if } x > 0 \\\\0, & \text{if } x < 0\end{cases}$$"""
+        r"""$$\text{ReLU}'(x) = \begin{cases}1, & \text{if } x > 0 \\\\0, & \text{if } x < 0\end{cases}$$<br>@advanced"""
         return np.where(x > 0, self.sharpness, 0)
     
 class LeakyReLU(ActivationFunction):
@@ -82,14 +91,16 @@ class LeakyReLU(ActivationFunction):
 
     def __init__(self, slope: float = 0.01, sharpness: float = 1):
         self.slope = slope
+        "Reference to the set slope value<br>@advanced"
         self.sharpness = sharpness
+        "Reference to the set sharpness value<br>@advanced"
         
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{LeakyReLU}(x)=\begin{cases}x, & \text{if } x > 0 \\\\\alpha{x}, & \text{if } x < 0\end{cases}$$'''
+        r"""$$\text{LeakyReLU}(x)=\begin{cases}x, & \text{if } x > 0 \\\\\alpha{x}, & \text{if } x < 0\end{cases}$$<br>@advanced"""
         return np.maximum(self.slope * x, self.sharpness * x)
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{LeakyReLU}'(x)=\begin{cases}1, & \text{if } x > 0 \\\\\alpha, & \text{if } x < 0\end{cases}$$'''
+        r"""$$\text{LeakyReLU}'(x)=\begin{cases}1, & \text{if } x > 0 \\\\\alpha, & \text{if } x < 0\end{cases}$$<br>@advanced"""
         return np.where(x > 0, self.sharpness, self.slope)
 
 class Softplus(ActivationFunction):
@@ -98,11 +109,11 @@ class Softplus(ActivationFunction):
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Softplus}(x)=\ln(1+e^x)$$'''
+        r"""$$\text{Softplus}(x)=\ln(1+e^x)$$<br>@advanced"""
         return np.log(1 + np.exp(x))
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Softplus}'(x)=\frac{1}{1+e^{-x}}$$'''
+        r"""$$\text{Softplus}'(x)=\frac{1}{1+e^{-x}}$$<br>@advanced"""
         return 1 / (1 + np.exp(-x))
     
 class ELU(ActivationFunction):
@@ -113,13 +124,14 @@ class ELU(ActivationFunction):
 
     def __init__(self, sharpness: float = 1):
         self.sharpness = sharpness
+        "Reference to the set sharpness value<br>@advanced"
         
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{ELU}(x)=\begin{cases}x, & \text{if } x > 0 \\\\\alpha(e^x-1), & \text{if } x < 0\end{cases}$$'''
+        r"""$$\text{ELU}(x)=\begin{cases}x, & \text{if } x > 0 \\\\\alpha(e^x-1), & \text{if } x < 0\end{cases}$$<br>@advanced"""
         return np.where(x >= 0, x, self.sharpness * (np.exp(x) - 1))
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{ELU}'(x)=\begin{cases}1, & \text{if } x > 0 \\\\\text{ELU}(x) + \alpha, & \text{if } x < 0\end{cases}$$'''
+        r"""$$\text{ELU}'(x)=\begin{cases}1, & \text{if } x > 0 \\\\\text{ELU}(x) + \alpha, & \text{if } x < 0\end{cases}$$<br>@advanced"""
         return np.where(x >= 0, 1, self.calculate(x) + self.sharpness)
 
 class SELU(ActivationFunction):
@@ -130,14 +142,16 @@ class SELU(ActivationFunction):
 
     def __init__(self, sharpness: float = 1, scale: float = 1):
         self.sharpness = sharpness
+        "Reference to the set sharpness value<br>@advanced"
         self.scale = scale
+        "Reference to the set scale value<br>@advanced"
         
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{SELU}(x)=\begin{cases}\lambda{x}, & \text{if } x > 0 \\\\\lambda\alpha(e^x-1), & \text{if } x < 0\end{cases}$$'''
+        r"""$$\text{SELU}(x)=\begin{cases}\lambda{x}, & \text{if } x > 0 \\\\\lambda\alpha(e^x-1), & \text{if } x < 0\end{cases}$$<br>@advanced"""
         return self.scale * np.where(x >= 0, x, self.sharpness * (np.exp(x) - 1))
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{SELU}'(x)=\begin{cases}\lambda, & \text{if } x > 0 \\\\\lambda\alpha{e^x}, & \text{if } x < 0\end{cases}$$'''
+        r"""$$\text{SELU}'(x)=\begin{cases}\lambda, & \text{if } x > 0 \\\\\lambda\alpha{e^x}, & \text{if } x < 0\end{cases}$$<br>@advanced"""
         return self.scale * np.where(x >= 0, 1, self.sharpness * np.exp(x))
 
 class GELU(ActivationFunction):
@@ -148,11 +162,11 @@ class GELU(ActivationFunction):
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{GELU}(x)=0.5x(1+\text{tanh}(\sqrt{\frac{2}{\pi}}(x+0.044715x^3)))$$'''
+        r"""$$\text{GELU}(x)=0.5x(1+\text{tanh}(\sqrt{\frac{2}{\pi}}(x+0.044715x^3)))$$<br>@advanced"""
         return 0.5 * x * (1 + np.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))))
     
     def derivative(self, x: np.ndarray) -> np.ndarray: 
-        r'''$$\text{GELU}'(x)=0.5\left(1+\text{tanh}(u)\right) + 0.5x(1-\text{tanh}^2(u))u'$$'''
+        r"""$$\text{GELU}'(x)=0.5\left(1+\text{tanh}(u)\right) + 0.5x(1-\text{tanh}^2(u))u'$$<br>@advanced"""
         u = np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))
         u_prime = np.sqrt(2 / np.pi) * (1 + 3 * 0.044715 * np.square(x))
         tanh_u = np.tanh(u)
@@ -165,11 +179,11 @@ class Gaussian(ActivationFunction):
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Gaussian}(x)={e^{-x^2}}$$'''
+        r"""$$\text{Gaussian}(x)={e^{-x^2}}$$<br>@advanced"""
         return np.exp(-x**2)
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Gaussian}'(x)=-2x\cdot{e^{-x^2}}$$'''
+        r"""$$\text{Gaussian}'(x)=-2x\cdot{e^{-x^2}}$$<br>@advanced"""
         return -2 * x * np.exp(-x**2)
 
 class Sigmoid(ActivationFunction):
@@ -183,11 +197,11 @@ class Sigmoid(ActivationFunction):
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Sigmoid}(x)=\frac{1}{1+e^{-x}}$$'''
+        r"""$$\text{Sigmoid}(x)=\frac{1}{1+e^{-x}}$$<br>@advanced"""
         return 1 / (1 + np.exp(-x))
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Sigmoid}'(x)=\text{Sigmoid}(x)(1-\text{Sigmoid}(x))$$'''
+        r"""$$\text{Sigmoid}'(x)=\text{Sigmoid}(x)(1-\text{Sigmoid}(x))$$<br>@advanced"""
         v = self.calculate(x)
         return v * (1 - v)
     
@@ -198,11 +212,11 @@ class Softsign(ActivationFunction):
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Softsign}(x)=\frac{x}{|{x}|+1}$$'''
+        r"""$$\text{Softsign}(x)=\frac{x}{|{x}|+1}$$<br>@advanced"""
         return x / (np.abs(x) + 1)
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Softsign}'(x)=\frac{1}{(|{x}|+1)^2}$$'''
+        r"""$$\text{Softsign}'(x)=\frac{1}{(|{x}|+1)^2}$$<br>@advanced"""
         return 1 / np.square(np.abs(x) + 1)
     
 class Swish(ActivationFunction):
@@ -212,11 +226,11 @@ class Swish(ActivationFunction):
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Swish}(x)=\frac{x}{1+e^{-x}}$$'''
+        r"""$$\text{Swish}(x)=\frac{x}{1+e^{-x}}$$<br>@advanced"""
         return x / (1 + np.exp(-x))
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Swish}'(x)=\text{Swish}(x)+\frac{1-\text{Swish}(x)}{1+e^{-x}}$$'''
+        r"""$$\text{Swish}'(x)=\text{Swish}(x)+\frac{1-\text{Swish}(x)}{1+e^{-x}}$$<br>@advanced"""
         v = self.calculate(x)
         return v + (1 - v) / (1 + np.exp(-x))
     
@@ -229,11 +243,11 @@ class Tanh(ActivationFunction):
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Tanh}(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}}$$'''
+        r"""$$\text{Tanh}(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}}$$<br>@advanced"""
         return np.tanh(x)
     
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Tanh}'(x)=1-\text{Tanh}(x)^2$$'''
+        r"""$$\text{Tanh}'(x)=1-\text{Tanh}(x)^2$$<br>@advanced"""
         return 1 - np.square(self.calculate(x))
 
 class Softmax(ActivationFunction):
@@ -246,7 +260,7 @@ class Softmax(ActivationFunction):
     """
 
     def calculate(self, x: np.ndarray) -> np.ndarray:
-        r'''$$\text{Softmax}(x_{i})=\frac{e^{x_{i}}}{\sum_{j=1}^{n}e^{x_{j}}}$$'''
+        r"""$$\text{Softmax}(x_{i})=\frac{e^{x_{i}}}{\sum_{j=1}^{n}e^{x_{j}}}$$<br>@advanced"""
         shifted_x = x - np.max(x, axis=-1, keepdims=True)
         exp_x = np.exp(shifted_x)
         sum_exp_x = np.sum(exp_x, axis=-1, keepdims=True)

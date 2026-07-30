@@ -18,6 +18,15 @@ from .Optimizers import Optimizer
 from .Layers import Layer
 from .Colors import theme
 
+def one_hot_encode(indices: np.ndarray, categories: int):
+    """
+    Used to turn data into one-hot encoded numpy arrays.
+    """
+    num = indices.shape[0] # number of indices
+    one_hot = numpy.zeros((num, categories)) # set all zeros
+    one_hot[numpy.arange(num), indices] = 1 # set indices to one
+    return np.array(one_hot)
+
 class Batch:
     """
     A batch is multiple pieces of training data packed in one
@@ -80,7 +89,6 @@ class NeuralNetwork:
         # Generate weight and bias lists
         for i in range(len(self.layers)):
             current_layer = self.layers[i]
-            input_size = current_layer.input_size
             
             if i == len(self.layers) - 1:
                 output_size = output_layer_size
@@ -89,15 +97,8 @@ class NeuralNetwork:
 
             # Kaiming Initialization
             current_layer.output_size = output_size
-            current_layer.weights = np.asarray(numpy.random.randn(input_size, output_size) * np.sqrt(2.0 / input_size)) # pyright: ignore[reportUnknownMemberType]
-            current_layer.biases = np.zeros(output_size) # pyright: ignore[reportUnknownMemberType]
-            current_layer.weight_momentum = np.zeros_like(current_layer.weights) # pyright: ignore[reportUnknownMemberType]
-            current_layer.bias_momentum = np.zeros_like(current_layer.biases) # pyright: ignore[reportUnknownMemberType]
-            current_layer.weight_varience = np.zeros_like(current_layer.weights) # pyright: ignore[reportUnknownMemberType]
-            current_layer.bias_varience = np.zeros_like(current_layer.biases) # pyright: ignore[reportUnknownMemberType]
-            current_layer.acc_w_grad = np.zeros_like(current_layer.weights) # pyright: ignore[reportUnknownMemberType]
-            current_layer.acc_b_grad = np.zeros_like(current_layer.biases) # pyright: ignore[reportUnknownMemberType]
-    
+            current_layer.init_weights(False)
+
     def run(self, inputs: np.ndarray) -> np.ndarray:
         """
         You can use this function to get an output
@@ -213,4 +214,4 @@ def load_model(filename: str = "data/model.pkl") -> NeuralNetwork:
     "A function to load a neural network from a `.pkl` file."
     return joblib.load(filename) # pyright: ignore[reportUnknownMemberType]
 
-__all__ = ["Batch", "create_batches", "NeuralNetwork", "save_model", "load_model"]
+__all__ = ["one_hot_encode", "Batch", "create_batches", "NeuralNetwork", "save_model", "load_model"]

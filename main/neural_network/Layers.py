@@ -1,6 +1,7 @@
 from .ActivationFunctions import ActivationFunction
 from .Optimizers import Optimizer
 import jax.numpy as np
+import numpy
 
 class Layer():
     """
@@ -38,6 +39,10 @@ class Layer():
     "@advanced"
     acc_b_grad: np.ndarray
     "@advanced"
+
+    def init_weights(self, set_zero: bool = False):
+        "Used to initialize the weights after the output size has been set. If set_zero is True, all the weights will be zero instead of random values.<br>@advanced"
+        pass
     
     def forward(self, inputs: np.ndarray) -> np.ndarray:
         "The method for a single forward pass.<br>@advanced"
@@ -57,6 +62,8 @@ class Dense(Layer):
     output_size: int
     activation: ActivationFunction
 
+    use_bias: bool
+
     inputs: np.ndarray
     z: np.ndarray
     weights: np.ndarray
@@ -68,9 +75,11 @@ class Dense(Layer):
     acc_w_grad: np.ndarray
     acc_b_grad: np.ndarray
 
-    def __init__(self, input_size: int, activation: ActivationFunction):
+    def __init__(self, input_size: int, activation: ActivationFunction, use_bias: bool = True):
         self.input_size = input_size
         self.activation = activation
+
+        self.use_bias = use_bias
 
         self.inputs = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
         self.z = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
@@ -82,7 +91,22 @@ class Dense(Layer):
         self.bias_varience = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
         self.acc_w_grad = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
         self.acc_b_grad = np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]
-    
+
+    def init_weights(self, set_zero: bool = False):
+        # Kaiming Initialization
+        if (set_zero):
+            self.weights = np.zeros((self.input_size, self.output_size))
+        else: # set random
+            self.weights = np.asarray(numpy.random.randn(self.input_size, self.output_size) * np.sqrt(2.0 / self.input_size)) # pyright: ignore[reportUnknownMemberType]
+        self.biases = np.zeros(self.output_size) # pyright: ignore[reportUnknownMemberType]
+        self.weight_momentum = np.zeros_like(self.weights) # pyright: ignore[reportUnknownMemberType]
+        self.bias_momentum = np.zeros_like(self.biases) # pyright: ignore[reportUnknownMemberType]
+        self.weight_varience = np.zeros_like(self.weights) # pyright: ignore[reportUnknownMemberType]
+        self.bias_varience = np.zeros_like(self.biases) # pyright: ignore[reportUnknownMemberType]
+        self.acc_w_grad = np.zeros_like(self.weights) # pyright: ignore[reportUnknownMemberType]
+        self.acc_b_grad = np.zeros_like(self.biases) # pyright: ignore[reportUnknownMemberType]
+
+
     def forward(self, inputs: np.ndarray) -> np.ndarray:
         self.inputs = inputs
         self.z = self.inputs @ self.weights + self.biases
@@ -93,7 +117,9 @@ class Dense(Layer):
         
         batch_size = self.inputs.shape[0]
         weight_gradient = (self.inputs.T @ dZ) / batch_size
-        bias_gradient = np.mean(dZ, axis=0)
+        bias_gradient = np.zeros(dZ.shape[1:])
+        if (self.use_bias):
+            bias_gradient = np.mean(dZ, axis=0)
 
         if clip_value:
             weight_gradient = np.clip(weight_gradient, -clip_value, clip_value)

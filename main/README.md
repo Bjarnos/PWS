@@ -164,7 +164,7 @@ weights. When you train a network you usually record your <em>loss</em>, the amo
 Just like loss functions, [optimizers](/PWS/neural_network/Optimizers.html) are meant to make
 your loss as close to zero as possible. 
 
-The simplest to work with is [<em>SGD</em>](/PWS/neural_network/Optimizers.html#SGD), although
+The simplest to work with is [<em>Stochastic gradient descent</em>](/PWS/neural_network/Optimizers.html#SGD) (SGD), although
 we recommend you to try others as well! Most optimizers work together with certain loss
 functions. After the network calculates the gradient of the loss function, SGD will take
 a small step in the opposite direction to decrease the loss.

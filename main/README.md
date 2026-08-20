@@ -28,7 +28,7 @@ At the end it will show the final trained accuracy. Have fun developing!
 
 ```sh
 from neural_network.NeuralNetwork import *
-from neural_network.Datasets import FASHION_MNIST
+from neural_network.Datasets import MNIST
 from neural_network.Layers import Dense
 from neural_network.ActivationFunctions import ReLU, Softmax
 from neural_network.LossFunctions import MeanSquaredError
@@ -91,7 +91,7 @@ For an input vector <em>x</em>, the layer calculates:
 
 $$z = w \cdot x + b$$
 
-For example, you could input an [image](/neural_network/Datasets.html#MNIST)
+For example, you could input an [image](/PWS/neural_network/Datasets.html#MNIST)
 of 784 pixels which represents a handwritten number, and have the neural network
 output 10 numbers from 0-1 (the chance the image represents that number). This
 would be 784 input nodes and 10 output nodes.
@@ -110,7 +110,7 @@ the second could decide if the image looks like an eight or not.
 
 We want our data to flow through our network before we can decide how wrong the weights and
 biases currently are (for the correction of the model, we're training it after all). During
-a <em>forward pass</em> a [batch](/neural_network/NeuralNetwork.html#Batch) of inputs is
+a <em>forward pass</em> a [batch](/PWS/neural_network/NeuralNetwork.html#Batch) of inputs is
 passed in the network.
 
 For each layer in the network, the data is multiplied by the layer's weights, the biases are added
@@ -120,17 +120,17 @@ layer's input, repeating until the data has passed through all layers.
 ## Activation Functions
 
 If we would only have layers our entire network would be linear.
-[<em>Activation functions</em>](/neural_network/ActivationFunctions.html) are
+[<em>Activation functions</em>](/PWS/neural_network/ActivationFunctions.html) are
 applied right after a layer's linear calculation to introduce non-linearity.
 
 The two functions easiest to begin with (if you only have one hidden and one ouput layer) are:
 
-[ReLU](/neural_network/ActivationFunctions.html#ReLU) (<em>Rectified Linear Unit</em>) for the hidden
+[ReLU](/PWS/neural_network/ActivationFunctions.html#ReLU) (<em>Rectified Linear Unit</em>) for the hidden
 layer. It acts as a simple threshold filter. If the input is negative, it outputs 0. If the input is
 positive, it passes the value through unchanged ($f(x) = \max(0, x)$). It works really well in hidden
 layers.
     
-[Softmax](/neural_network/ActivationFunctions.html#Softmax) for the output layer. It takes a vector of
+[Softmax](/PWS/neural_network/ActivationFunctions.html#Softmax) for the output layer. It takes a vector of
 numbers from the previous layer and converts them into a probability distribution that sums to 1.
 
 The ReLU function turns negative values into 0, which introduces the non-linearity needed to learn
@@ -139,12 +139,12 @@ complex shapes. Softmax will squash the ReLU outputs to a proper 10 nodes output
 ## Loss Functions
 
 If you want the network to improve, it needs to know how wrong its current guesses are.
-A [<em>Loss function</em>](/neural_network/LossFunctions.html) takes the network's
+A [<em>Loss function</em>](/PWS/neural_network/LossFunctions.html) takes the network's
 predictions and the correct labels (training data always has input data and labels matched
 to the input data, e.g. an image and the number it represents), and calculates a penalty score.
 
 One which we found to be very accurate is the
-[<em>Mean Squared Error</em>](/neural_network/LossFunctions.html#MeanSquaredError) function.
+[<em>Mean Squared Error</em>](/PWS/neural_network/LossFunctions.html#MeanSquaredError) function.
 It squares the differences between the predicted values and the actual values, then averages them.
 
 ## The Backward Pass
@@ -159,12 +159,12 @@ to the final error. The backward pass moves from the output layer all the way ba
 
 ## Optimizers
 
-Once the gradients are found, the [<em>optimizer</em>](/neural_network/Optimizers.html) steps in to tweak the
+Once the gradients are found, the [<em>optimizer</em>](/PWS/neural_network/Optimizers.html) steps in to tweak the
 weights. When you train a network you usually record your <em>loss</em>, the amount of your errors.
-Just like loss functions, [optimizers](/neural_network/Optimizers.html) are meant to make
+Just like loss functions, [optimizers](/PWS/neural_network/Optimizers.html) are meant to make
 your loss as close to zero as possible. 
 
-The simplest to work with is [<em>SGD</em>](/neural_network/Optimizers.html#SGD), although
+The simplest to work with is [<em>SGD</em>](/PWS/neural_network/Optimizers.html#SGD), although
 we recommend you to try others as well! Most optimizers work together with certain loss
 functions. After the network calculates the gradient of the loss function, SGD will take
 a small step in the opposite direction to decrease the loss.

@@ -29,7 +29,7 @@ def benchmark(network_loss: LossFunction, network_optimizer: Optimizer, network_
     test_batches = create_batches(mnist.test_images, mnist.test_labels, 16)
     t7 = time()
     final_acc = network.test_model(test_batches)
-    print(f"Final accuracy: {(final_acc*100):.4f}%")
+    print(f"Final accuracy: {(final_acc*100):.2f}%")
     t8 = time()
     print(
         f"Creating batches:               {t3-t2:.4}s\n"

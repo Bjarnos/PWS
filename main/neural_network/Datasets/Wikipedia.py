@@ -1,8 +1,5 @@
 from typing import ClassVar
 import os
-import jax.numpy as np
-import tiktoken
-import numpy
 
 from .Dataset import Dataset
 
@@ -10,8 +7,8 @@ class Wikipedia(Dataset):
     """
     The class for the Wikipedia dataset.
 
-    It contains 60.000 training images+labels and
-    10.000 test images+labels, each representing a number.
+    It contains 249.396 articles, 196.000 words, 31M tokens,
+    all from the Simple English Wikipedia.
     """
     
     default_data_dir: ClassVar[str] = "data/wikipedia"

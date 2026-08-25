@@ -110,7 +110,7 @@ class Window:
         pygame.quit()
 
 if __name__ == "__main__":
-    network = load_model("data/test.pkl")
+    network = load_model("data/mnist.pkl")
 
     timer = 0
     timer_dur = 10

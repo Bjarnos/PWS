@@ -111,4 +111,44 @@ class Dense(Layer):
 
         return next_output_gradient
 
-__all__ = ["Layer", "Dense"]
+class Embedding(Layer):
+    """
+    A layer to map tokens to embedding vectors, with no
+    one-hot encoding.
+    """
+
+    input_size: int   # vocab_size
+    output_size: int  # embedding_dim
+    weights: np.ndarray
+    weight_state: dict[str, np.ndarray]
+
+    def __init__(self, vocab_size: int, embedding_dim: int):
+        self.input_size = vocab_size
+        self.output_size = embedding_dim
+        self.inputs = np.empty(0, dtype=int)
+        self.weights = np.empty((0, 0))
+        self.weight_state = {}
+
+    def init_weights(self, set_zero: bool = False):
+        if set_zero:
+            self.weights = np.zeros((self.input_size, self.output_size))
+        else:
+            self.weights = np.asarray(
+                numpy.random.randn(self.input_size, self.output_size) * np.sqrt(2.0 / self.output_size)
+            )
+
+    def forward(self, inputs: np.ndarray) -> np.ndarray:
+        self.inputs = inputs
+        return self.weights[inputs]
+
+    def backward(self, output_gradient: np.ndarray, optimizer: Optimizer, clip_value: float = 5.0, is_last: bool = False) -> np.ndarray:
+        if clip_value:
+            output_gradient = np.clip(output_gradient, -clip_value, clip_value)
+
+        grad = np.zeros_like(self.weights)
+        grad = grad.at[self.inputs].add(output_gradient)
+        self.weights = optimizer.calculate(self.weights, self.weight_state, grad)
+        return output_gradient
+
+__all__ = ["Layer", "Dense", "Embedding"]
+

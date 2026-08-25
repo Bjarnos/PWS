@@ -93,7 +93,26 @@ class KLDivergence(LossFunction):
         r"""$$\text{KLD}'=\hat{y_i} - y_i$$<br>@advanced"""
         return predicted - expected
 
+class BinaryCrossEntropy(LossFunction):
+    """
+    A loss function which calculates the difference between
+    true binary labels and predicted probabilities.
+    """
+
+    def __init__(self, epsilon: float = 1e-9):
+        self.epsilon = epsilon
+
+    def calculate(self, predicted: np.ndarray, expected: np.ndarray):
+        r"""$$\text{BCE}=-\frac{1}{n}\sum_{i=1}^n [y_i\ln(\hat{y_i}) + (1-y_i)\ln(1-\hat{y_i})]$$<br>@advanced"""
+        pred_clipped = np.clip(predicted, self.epsilon, 1.0 - self.epsilon)
+        return -np.mean(expected * np.log(pred_clipped) + (1.0 - expected) * np.log(1.0 - pred_clipped))
+
+    def derivative(self, predicted: np.ndarray, expected: np.ndarray):
+        r"""$$\text{BCE}'=\hat{y_i}-y_i$$<br>@advanced"""
+        return predicted - expected
+
 __all__ = [
     "LossFunction", "MeanSquaredError", "MeanAbsoluteError",
-    "CategorialCrossEntropy", "KLDivergence"
+    "CategorialCrossEntropy", "KLDivergence", "BinaryCrossEntropy"
     ]
+

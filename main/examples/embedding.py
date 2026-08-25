@@ -11,8 +11,10 @@ import json
 import joblib
 import numpy
 
+train = True # edit this if needed
+
 wiki = Wikipedia()
-text = wiki.text[:50000]
+text = wiki.text # [:50000]
 
 pat_str = r"""'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}++|\p{N}{1,3}+| ?[^\s\p{L}\p{N}]++[\r\n]*+|\s++$|\s*[\r\n]|\s+(?!\S)|\s"""
 pieces = regex.findall(pat_str, text)
@@ -20,6 +22,7 @@ pieces = regex.findall(pat_str, text)
 should_dump = False
 
 try:
+    if train: raise FileNotFoundError("Can't load vocab when training.")
     ranks = joblib.load("data/vocab.pkl")
 except FileNotFoundError:
     should_dump = True
@@ -39,8 +42,6 @@ if should_dump:
     vocab = {encoding.decode([i]): i for i in range(encoding.n_vocab)}
     with open("data/vocab.json", "w", encoding="utf-8") as f:
         json.dump(vocab, f, ensure_ascii=False, indent=2)
-
-train = False
 
 if train:
     def get_skipgram_pairs(tokens: np.ndarray, window_size: int):

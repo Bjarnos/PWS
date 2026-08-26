@@ -14,53 +14,57 @@ class Plot:
         self.benchmarks = benchmarks
         self.activation_index = 0
 
+        self.dictionary: dict[str, dict[str, tuple[list[float], list[float]]]] = {}
         self.fig = mpl.figure(figsize=(8, 8), num="Benchmarks")
 
+        self.calculate_format()
         self.update_plot()
         mpl.show()
+
+    def calculate_format(self):
+        for i in range(len(benchmarks)):
+            activation = str(benchmarks[i][0])
+            loss = str(benchmarks[i][1])
+            opt = str(benchmarks[i][2])
+            rate, time, acc = benchmarks[i][3:]
+            rate, time, acc = float(str(rate)), float(str(time)), float(str(acc))
+            if (self.dictionary.get(activation) == None):
+                self.dictionary[activation] = {}
+
+            if (self.dictionary[activation].get(loss) == None):
+                self.dictionary[activation][loss] = {}
+
+            if (self.dictionary[activation][loss].get(opt) == None):
+                self.dictionary[activation][loss][opt] = {'rate': [], 'time': [], 'acc': []}
+
+            self.dictionary[activation][loss][opt]['rate'].append(rate)
+            self.dictionary[activation][loss][opt]['time'].append(time)
+            self.dictionary[activation][loss][opt]['acc'].append(acc)
+
+        if not self.dictionary:
+            ax = self.fig.add_subplot(111)
+            ax.text(0.5, 0.5, f"No benchmark data found", ha='center', va='center', fontsize=12)
+            ax.axis('off')
+
+            self.draw()
+            return
 
     def update_plot(self):
         self.fig.clf()
         self.fig.subplots_adjust(bottom=0.15, top=0.9, left=0.1, right=0.95, hspace=0.4, wspace=0.4)
 
+        fontsize = 6
         activation = self.activations[self.activation_index]
-
-        dictionary: dict[str, dict[str, tuple[list[float], list[float]]]] = {}
-        for i in range(len(benchmarks)):
-            if (benchmarks[i][0] == activation):
-                loss = str(benchmarks[i][1])
-                opt = str(benchmarks[i][2])
-                rate, time, acc = benchmarks[i][3:]
-                rate, time, acc = float(str(rate)), float(str(time)), float(str(acc))
-                if (dictionary.get(loss) == None):
-                    dictionary[loss] = {}
-
-                if (dictionary[loss].get(opt) == None):
-                    dictionary[loss][opt] = {'rate': [], 'time': [], 'acc': []}
-
-                dictionary[loss][opt]['rate'].append(rate)
-                dictionary[loss][opt]['time'].append(time)
-                dictionary[loss][opt]['acc'].append(acc)
 
         self.fig.suptitle(activation, fontsize=14, fontweight='bold')
 
-        if not dictionary:
-            ax = self.fig.add_subplot(111)
-            ax.text(0.5, 0.5, f"No benchmark data found for '{activation}'", ha='center', va='center', fontsize=12)
-            ax.axis('off')
-
-            self.draw()
-            return
-        
-        fontsize = 6
-
         index = 0
-        num_loss = len(dictionary)
-        num_opt = len(dictionary[loss])
-        for i, loss in enumerate(dictionary):
-            for j, opt in enumerate(dictionary[loss]):
+        num_loss = len(self.dictionary[activation])
+        num_opt = len(self.dictionary[activation]["MeanSquaredError"])
+        for i, loss in enumerate(self.dictionary[activation]):
+            for j, opt in enumerate(self.dictionary[activation][loss]):
                 index += 1
-                data = dictionary[loss][opt]
+                data = self.dictionary[activation][loss][opt]
 
                 ax = self.fig.add_subplot(num_loss, num_opt, index)
                 ax.plot('rate', 'acc', 'b-', data=data)
@@ -102,7 +106,7 @@ class Plot:
         self.activation_index = (self.activation_index + 1) % len(self.activations)
         self.update_plot()
 
-with open("benchmarks.json", "r") as file:
+with open("data/benchmarks.json", "r") as file:
     benchmarks = np.asarray(json.load(file))
 
 Plot(benchmarks)

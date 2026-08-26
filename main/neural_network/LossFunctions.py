@@ -19,6 +19,12 @@ class LossFunction:
     for typing.</em>
     """
 
+    def __eq__(self, other: object) -> bool:
+        return type(self) is type(other) and self.__dict__ == getattr(other, "__dict__", None)
+
+    def __hash__(self) -> int:
+        return hash((type(self), tuple(sorted(self.__dict__.items()))))
+
     def calculate(self, predicted: np.ndarray, expected: np.ndarray) -> np.ndarray:
         "The method to calculate this loss function.<br>@advanced"
         return np.empty((0, 0)) # pyright: ignore[reportUnknownMemberType]

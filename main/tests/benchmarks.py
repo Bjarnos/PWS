@@ -65,5 +65,5 @@ for activation in [Linear, ReLU, LeakyReLU, Softplus, ELU, SELU, GELU, Gaussian,
                 runs += 1
                 print(f"Completed: {runs}/{total_runs}")
 
-with open("benchmarks.json", "w") as file:
+with open("data/benchmarks.json", "w") as file:
     json.dump(times, file)

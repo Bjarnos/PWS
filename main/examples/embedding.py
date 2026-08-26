@@ -1,30 +1,32 @@
-from neural_network.NeuralNetwork import *
+from neural_network.NeuralNetwork import NeuralNetwork, one_hot_encode, create_batches, save_model, load_model
 from neural_network.Datasets import Wikipedia
 from neural_network.Layers import Dense, Embedding
-from neural_network.ActivationFunctions import *
-from neural_network.LossFunctions import *
-from neural_network.Optimizers import *
+from neural_network.ActivationFunctions import Sigmoid
+from neural_network.LossFunctions import BinaryCrossEntropy
+from neural_network.Optimizers import SGD
 from collections import Counter
 import re
+import sys
 import json
 import joblib
 import jax.numpy as np
 
-train = True # edit this if needed
+train = "-nt" not in sys.argv # add -nt to not train a new model
+regen_vocab = "-nv" not in sys.argv # add -nv to keep the old vocab but train again
 
 wiki = Wikipedia()
-text = wiki.text[:50000]
+wiki.text = wiki.text[:150000]
 
-min_count = 5
-max_vocab_size = 4000
+min_count = 3 # minimum count of a word to appear in vocabulary
+# if your vocabulary is very big, increase this number to speed up training
 unk_token = "_"
 
-if train:
-    words = re.findall(r"\b[a-zA-Z]+(?:'[a-zA-Z]+)?\b", text.lower()) # only allow letters
+if train and regen_vocab:
+    words = re.findall(r"\b[a-zA-Z]+(?:'[a-zA-Z]+)?\b", wiki.text.lower()) # only allow letters
     counts = Counter(words)
 
     vocab = {unk_token: 0}
-    for word, count in counts.most_common(max_vocab_size - 1):
+    for word, count in counts.most_common():
         if count >= min_count and word != unk_token:
             vocab[word] = len(vocab)
 
@@ -35,7 +37,7 @@ else:
     with open("data/vocab.json", "r", encoding="utf-8") as f:
         vocab = json.load(f)
 
-idx2word = list(vocab.keys())
+token2word = list(vocab.keys())
 vocab_size = len(vocab)
 
 def encode(text: str) -> list[int]:
@@ -44,7 +46,7 @@ def encode(text: str) -> list[int]:
     return [vocab.get(w, unk_id) for w in words]
 
 def decode(tokens: list[int] | np.ndarray) -> list[str]:
-    return [idx2word[i] if 0 <= i < len(idx2word) else unk_token for i in tokens]
+    return [token2word[i] if 0 <= i < len(token2word) else unk_token for i in tokens]
 
 if train:
     def get_skipgram_pairs(tokens: np.ndarray, window_size: int):
@@ -67,7 +69,7 @@ if train:
 
     embedding_dim = 50
 
-    tokens = np.array(encode(text))
+    tokens = np.array(encode(wiki.text))
 
     window_size = 5
     batch_size = 64
@@ -94,14 +96,16 @@ def cosine_sim(v1: np.ndarray, v2: np.ndarray):
 def get_similar(embedding: np.ndarray):
     similarities = cosine_sim(skip_gram.layers[0].weights, np.reshape(embedding, (50, 1)))
     indices = np.argsort(np.ravel(similarities))
+    # print(similarities[indices[-1]])
+    # print(similarities[indices[-2]])
+    # print(similarities[indices[-3]])
     return indices
 
-test_words = ["month", "year", "april", "august", "first", "second"]
+test_words = [unk_token, "month", "year", "april", "august", "first", "second"]
 token_ids = [vocab.get(w, vocab[unk_token]) for w in test_words]
 vectors = get_vector(np.array(token_ids))
 
 for word, token_id, v in zip(test_words, token_ids, vectors):
     similar_indices = get_similar(v)
-    # the most similar is the word itself, second most similar is -2
-    similar_word = idx2word[similar_indices[-2]] if len(similar_indices) > 1 else unk_token
+    similar_word = token2word[similar_indices[-2]] if len(similar_indices) > 1 else unk_token
     print(f"{word} ({token_id}) -> {similar_word}")

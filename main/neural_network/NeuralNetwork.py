@@ -54,10 +54,10 @@ def create_batches(x: np.ndarray, y: np.ndarray, size: int = 256) -> list[Batch]
     `NeuralNetwork.train_model()`.
     """
 
-    num_batches = int(np.ceil(x.shape[0] / size))
-    x_train = numpy.array_split(numpy.asarray(x), num_batches)
-    y_train = numpy.array_split(numpy.asarray(y), num_batches)
-    return [Batch(_x, _y) for _x, _y in zip(x_train, y_train)] # pyright: ignore[reportArgumentType]
+    x = np.asarray(x)
+    y = np.asarray(y)
+    num_samples = x.shape[0]
+    return [Batch(x[i : i + size], y[i : i + size]) for i in range(0, num_samples, size)]
 
 class NeuralNetwork:
     """

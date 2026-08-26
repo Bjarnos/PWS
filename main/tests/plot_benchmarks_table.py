@@ -4,6 +4,7 @@
 from neural_network.ActivationFunctions import __all__ as activation_functions
 
 import matplotlib.pyplot as mpl
+from matplotlib import colors
 from matplotlib.widgets import Button
 import numpy as np
 import json
@@ -14,10 +15,10 @@ class Plot:
         self.activations = [a for a in activation_functions if a != "ActivationFunction"]
         self.benchmarks = benchmarks
         self.activation_index = 0
-        self.cmap = mpl.get_cmap("Greys")
+        self.cmap = mpl.get_cmap("grey")
 
         self.dictionary: dict[str, dict[str, dict[str, dict[list[float]]]]] = {}
-        self.fig = mpl.figure(figsize=(8, 8), num="Benchmarks")
+        self.fig = mpl.figure(num="Benchmarks", layout="constrained")
 
         self.calculate_format()
         self.update_plot()
@@ -43,19 +44,9 @@ class Plot:
             self.dictionary[opt][loss][activation]['time'].append(time)
             self.dictionary[opt][loss][activation]['acc'].append(acc)
 
-        if not self.dictionary:
-            ax = self.fig.add_subplot(111)
-            ax.text(0.5, 0.5, f"No benchmark data found", ha='center', va='center', fontsize=12)
-            ax.axis('off')
-
-            self.draw()
-            return
-
     def update_plot(self):
         self.fig.clf()
         self.fig.subplots_adjust(bottom=0.15, top=0.9, left=0.1, right=0.95, hspace=0.4, wspace=0.4)
-
-        fontsize = 6
 
         self.fig.suptitle("Benchmark data per optimizer", fontsize=14, fontweight='bold')
 
@@ -69,16 +60,21 @@ class Plot:
                     acc = self.dictionary[optimizer][loss][activation]["acc"]
                     max_acc = max(acc)
                     print(1 - (max_acc))
-                    data[(i, j)] = math.log(1 - max_acc) / 5 + 1
+                    data[(i, j)] = max_acc#math.log(1 - max_acc) / 5 + 1
 
             ax = self.fig.add_subplot(3, 2, idx+1)
-            ax.pcolor(data, cmap=self.cmap)
+            image = ax.pcolor(data, cmap=self.cmap, edgecolors="k", norm=colors.PowerNorm(3, 0, 1))
             ax.set_xticks(np.arange(0.5, num_act+0.5), self.dictionary[optimizer]["MeanSquaredError"].keys())
             ax.set_yticks(np.arange(0.5, num_loss+0.5), self.dictionary[optimizer].keys())
-            ax.grid(False)
+            ax.set_title(optimizer)
             ax.tick_params("x", labelrotation=270)
 
-        self.fig.canvas.draw_idle()
+        cax = self.fig.add_subplot(3, 2, 6)
+        cax.set_title("Accuracy")
+        cax.set_aspect(0.15)
+        self.fig.colorbar(image, cax=cax, orientation='horizontal')
+        # self.fig.canvas.draw_idle()
+        mpl.plot()
 
 
 with open("data/benchmarks.json", "r") as file:

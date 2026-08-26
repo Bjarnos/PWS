@@ -47,7 +47,7 @@ for optimizer, items in combinations_by_optimizer.items():
 
             highest = item
 
-    logs += f"\n\nThe best combination for *{optimizer}* was {item_to_string(highest)}, with **{highest[5]*100}% accuracy**."
+    logs += f"\n\nThe best combination for *{optimizer}* was {item_to_string(highest)}, with **{highest[5]*100:.4}% accuracy**."
 
 logs_template = logs_template.replace("<marker_1>", logs)
 

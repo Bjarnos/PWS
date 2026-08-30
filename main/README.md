@@ -106,6 +106,10 @@ By adding hidden layers you give the network the ability to learn different
 features. For example, the first could detect edges and loops in an image,
 the second could decide if the image looks like an eight or not.
 
+Here is a diagram of a neural network with 3 input neurons, 1 hidden layer with 5 neurons, and 4 output neurons:
+
+![Neural Network](network.svg)
+
 ## The Forward Pass
 
 We want our data to flow through our network before we can decide how wrong the weights and
